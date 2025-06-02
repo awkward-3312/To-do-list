@@ -1,4 +1,3 @@
-// === Variables de referencia ===
 const inputTarea = document.getElementById("nueva-tarea");
 const listaHoy = document.getElementById("lista-hoy");
 const listaManana = document.getElementById("lista-manana");
@@ -45,6 +44,13 @@ function toggleCompletada(index) {
   tareas[index].completada = !tareas[index].completada;
   guardarTareas();
   renderizarTareas();
+
+  // Efecto visual de resaltado
+  const li = document.querySelectorAll("li")[index];
+  if (li) {
+    li.classList.add("highlight");
+    setTimeout(() => li.classList.remove("highlight"), 500);
+  }
 }
 
 // === Eliminar tarea ===
@@ -74,6 +80,7 @@ function renderizarTareas() {
     li.setAttribute("data-categoria", tarea.categoria);
     li.setAttribute("data-prioridad", tarea.prioridad);
     if (tarea.completada) li.classList.add("completed");
+    li.classList.add("fade-in");
 
     const span = document.createElement("span");
     span.textContent = tarea.texto;
@@ -86,7 +93,6 @@ function renderizarTareas() {
 
     li.append(span, btnEliminar);
 
-    // Agrupación por secciones
     if (tarea.seccion === "hoy") {
       listaHoy.appendChild(li);
       totalHoy++;
@@ -100,12 +106,17 @@ function renderizarTareas() {
     if (tarea.completada) totalCompletadas++;
   });
 
-  // === Indicadores ===
   progresoDia.textContent = `✔️ Completadas hoy: ${completadasHoy} / ${totalHoy}`;
   const totalTareas = tareas.length;
   const progreso = totalTareas ? Math.round((totalCompletadas / totalTareas) * 100) : 0;
   progresoTotal.textContent = `📊 Progreso total semanal: ${progreso}%`;
 }
 
-// === Iniciar al cargar ===
+// === Botón flotante enfoca el input ===
+function focusInput() {
+  inputTarea.scrollIntoView({ behavior: "smooth" });
+  inputTarea.focus();
+}
+
+// === Inicializar ===
 renderizarTareas();
