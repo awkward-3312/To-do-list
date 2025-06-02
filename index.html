@@ -5,34 +5,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mi Día | To-Do List</title>
 
-  <!-- Google Fonts -->
+  <!-- Fuentes -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+  <!-- AOS Animaciones -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
   <!-- CSS personalizado -->
   <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
-  <main class="contenedor-todo">
+  <main class="contenedor">
+    <!-- Encabezado -->
     <header class="encabezado">
-      <h1><i class="fa-solid fa-clipboard-list"></i> Mi Día</h1>
+      <h1><i class="fa-solid fa-clipboard-check"></i> Mi Día</h1>
     </header>
 
-    <section class="agregar-tarea">
-      <input type="text" id="nueva-tarea" placeholder="¿Qué necesitas hacer hoy?" />
-      <button onclick="agregarTarea()">
-        <i class="fa-solid fa-plus"></i> Agregar
-      </button>
+    <!-- Filtros -->
+    <section class="filtros">
+      <select id="filtro-categoria">
+        <option value="">Todas las categorías</option>
+        <option value="regulatorio">💼 Regulatorio</option>
+        <option value="academico">📚 Académico</option>
+        <option value="personal">🏡 Personal</option>
+      </select>
     </section>
 
-    <section class="lista-tareas">
-      <ul id="lista-tareas"></ul>
+    <!-- Formulario para agregar tarea -->
+    <section class="agregar" data-aos="fade-up">
+      <input type="text" id="nueva-tarea" placeholder="Escribe una tarea..." />
+      <select id="categoria">
+        <option value="regulatorio">💼 Regulatorio</option>
+        <option value="academico">📚 Académico</option>
+        <option value="personal">🏡 Personal</option>
+      </select>
+      <select id="prioridad">
+        <option value="alta">🔥 Alta</option>
+        <option value="media">⏳ Media</option>
+        <option value="baja">🧊 Baja</option>
+      </select>
+      <select id="seccion">
+        <option value="hoy">📅 Hoy</option>
+        <option value="manana">📅 Mañana</option>
+        <option value="semana">📅 Esta semana</option>
+      </select>
+      <button onclick="agregarTarea()"><i class="fa-solid fa-plus"></i></button>
+    </section>
+
+    <!-- Secciones de tareas -->
+    <section class="tareas">
+      <div class="bloque" id="bloque-hoy" data-aos="fade-up">
+        <h2>📅 Hoy</h2>
+        <ul class="lista" id="lista-hoy"></ul>
+      </div>
+      <div class="bloque" id="bloque-manana" data-aos="fade-up">
+        <h2>📅 Mañana</h2>
+        <ul class="lista" id="lista-manana"></ul>
+      </div>
+      <div class="bloque" id="bloque-semana" data-aos="fade-up">
+        <h2>📅 Esta semana</h2>
+        <ul class="lista" id="lista-semana"></ul>
+      </div>
+    </section>
+
+    <!-- Indicadores -->
+    <section class="indicadores" data-aos="fade-up">
+      <p id="progreso-dia">✔️ Completadas hoy: 0 / 0</p>
+      <p id="progreso-total">📊 Progreso total semanal: 0%</p>
     </section>
   </main>
 
-  <!-- JavaScript personalizado -->
+  <!-- Botón flotante para móviles -->
+  <button class="boton-flotante" onclick="document.getElementById('nueva-tarea').focus()">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
   <script src="js/index.js"></script>
 </body>
 </html>
