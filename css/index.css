@@ -243,3 +243,55 @@ li[data-prioridad="baja"] span::before {
     right: 16px;
   }
 }
+
+/* === LAYOUT FLEX === */
+.layout {
+  display: flex;
+  gap: 20px;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+  min-width: 200px;
+  background-color: #CDB4DB;
+  border-radius: 16px;
+  padding: 30px 20px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.sidebar h2 {
+  color: #fff;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar nav li {
+  margin-bottom: 14px;
+}
+
+.sidebar nav a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.sidebar nav a.activo,
+.sidebar nav a:hover {
+  background-color: #FFAFCC;
+  color: #2c2c2c;
+}
