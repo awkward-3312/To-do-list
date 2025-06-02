@@ -216,6 +216,28 @@ li[data-prioridad="baja"] span::before {
     align-items: center;
   }
 
+  /* === ANIMACIÓN AL AGREGAR TAREA === */
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === RESALTADO TEMPORAL AL COMPLETAR TAREA === */
+.highlight {
+  background-color: #BDE0FE !important;
+  transition: background-color 0.4s ease;
+}
+
   .boton-flotante {
     bottom: 16px;
     right: 16px;
