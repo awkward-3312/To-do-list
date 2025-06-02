@@ -1,8 +1,8 @@
 /* === RESET Y BASE === */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -10,85 +10,103 @@ body {
   background-color: #BDE0FE;
   color: #2c2c2c;
   min-height: 100vh;
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
 }
 
-/* === CONTENEDOR PRINCIPAL === */
+/* === CONTENEDOR GENERAL === */
 .contenedor {
-  max-width: 700px;
-  margin: auto;
-  background: #fff;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-/* === ENCABEZADO === */
-.encabezado h1 {
+/* === HEADER === */
+header {
   text-align: center;
-  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 2.2rem;
   color: #A2D2FF;
-  margin-bottom: 20px;
+}
+
+header p {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 8px;
 }
 
 /* === FILTROS === */
 .filtros {
-  margin-bottom: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
 }
 
-.filtros select {
-  padding: 10px;
-  border-radius: 8px;
+.filtros select,
+.filtros button {
+  padding: 10px 16px;
+  border-radius: 12px;
   border: 2px solid #CDB4DB;
-  font-size: 1rem;
+  background: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
 }
 
-/* === FORMULARIO AGREGAR === */
+.filtros button:hover {
+  background-color: #FFC8DD;
+}
+
+/* === AGREGAR TAREA === */
 .agregar {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
   justify-content: center;
 }
 
 .agregar input,
 .agregar select {
-  padding: 10px;
-  border-radius: 8px;
+  flex: 1 1 200px;
+  padding: 12px;
+  border-radius: 10px;
   border: 2px solid #CDB4DB;
-  font-size: 1rem;
-}
-
-.agregar input {
-  flex: 1 1 100%;
+  font-size: 0.95rem;
 }
 
 .agregar button {
+  padding: 12px 20px;
   background-color: #FFAFCC;
   border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
+  border-radius: 10px;
   font-weight: bold;
-  color: #2c2c2c;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .agregar button:hover {
   background-color: #FFC8DD;
 }
 
-/* === BLOQUES DE TAREAS POR SECCIÓN === */
+/* === SECCIONES DE TAREAS === */
 .bloque {
   margin-bottom: 30px;
 }
 
 .bloque h2 {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  margin-bottom: 16px;
   color: #2c2c2c;
-  margin-bottom: 10px;
 }
 
 /* === LISTA DE TAREAS === */
@@ -99,55 +117,52 @@ body {
 
 .lista li {
   background-color: #CDB4DB;
-  padding: 10px 14px;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
   transition: 0.3s;
-  font-size: 0.95rem;
 }
 
 .lista li span {
-  flex: 1;
+  flex-grow: 1;
   cursor: pointer;
-  word-break: break-word;
 }
 
 .lista li.completed span {
   text-decoration: line-through;
-  color: #888;
+  color: #666;
 }
 
 .lista .delete {
   background: none;
   border: none;
   color: #e74c3c;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
 }
 
-/* === CATEGORÍAS === */
+/* === CATEGORÍA POR COLOR === */
 li[data-categoria="regulatorio"] {
-  border-left: 8px solid #FFAFCC;
+  border-left: 6px solid #FFAFCC;
 }
 li[data-categoria="academico"] {
-  border-left: 8px solid #A2D2FF;
+  border-left: 6px solid #A2D2FF;
 }
 li[data-categoria="personal"] {
-  border-left: 8px solid #CDB4DB;
+  border-left: 6px solid #CDB4DB;
 }
 
-/* === PRIORIDADES (se reflejan con iconos y color de texto) === */
+/* === PRIORIDAD ICONO === */
 li[data-prioridad="alta"] span::before {
   content: "🔥 ";
   color: #e74c3c;
 }
 li[data-prioridad="media"] span::before {
   content: "⏳ ";
-  color: #FFA07A;
+  color: #f39c12;
 }
 li[data-prioridad="baja"] span::before {
   content: "🧊 ";
@@ -156,31 +171,34 @@ li[data-prioridad="baja"] span::before {
 
 /* === INDICADORES === */
 .indicadores {
-  text-align: center;
-  margin-top: 20px;
-  background-color: #FFC8DD;
-  padding: 14px;
-  border-radius: 10px;
+  font-size: 0.95rem;
   font-weight: bold;
-  color: #2c2c2c;
+  text-align: center;
+  background: #FFC8DD;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
 }
 
-/* === BOTÓN FLOTANTE (móvil) === */
+/* === BOTÓN FLOTANTE === */
 .boton-flotante {
-  display: none;
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background-color: #FFAFCC;
-  color: #2c2c2c;
-  border: none;
-  border-radius: 50%;
+  bottom: 20px;
+  right: 20px;
   width: 56px;
   height: 56px;
-  font-size: 1.4rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border-radius: 50%;
+  background-color: #FFAFCC;
+  color: #2c2c2c;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   cursor: pointer;
-  z-index: 1000;
+  transition: background-color 0.3s;
+  z-index: 100;
 }
 
 .boton-flotante:hover {
@@ -191,16 +209,15 @@ li[data-prioridad="baja"] span::before {
 @media (max-width: 768px) {
   .agregar {
     flex-direction: column;
-    align-items: stretch;
   }
 
-  .agregar input,
-  .agregar select,
-  .agregar button {
-    width: 100%;
+  .filtros {
+    flex-direction: column;
+    align-items: center;
   }
 
   .boton-flotante {
-    display: block;
+    bottom: 16px;
+    right: 16px;
   }
 }
