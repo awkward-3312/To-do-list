@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi To-Do Diario</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .todo-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .input-section {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 14px;
+      background-color: #1877f2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    li.completed span {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .delete {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="todo-container">
+    <h1>📋 Mis Tareas</h1>
+    <div class="input-section">
+      <input type="text" id="nueva-tarea" placeholder="Escribe una tarea..." />
+      <button onclick="agregarTarea()">Agregar</button>
+    </div>
+    <ul id="lista-tareas"></ul>
+  </div>
+
+  <script>
+    const input = document.getElementById("nueva-tarea");
+    const lista = document.getElementById("lista-tareas");
+
+    let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+
+    function renderizarTareas() {
+      lista.innerHTML = "";
+      tareas.forEach((tarea, index) => {
+        const li = document.createElement("li");
+        li.className = tarea.completada ? "completed" : "";
+        li.innerHTML = `
+          <span onclick="toggleCompletada(${index})">${tarea.texto}</span>
+          <button class="delete" onclick="eliminarTarea(${index})">🗑️</button>
+        `;
+        lista.appendChild(li);
+      });
+    }
+
+    function agregarTarea() {
+      const texto = input.value.trim();
+      if (texto) {
+        tareas.push({ texto, completada: false });
+        input.value = "";
+        guardarYRenderizar();
+      }
+    }
+
+    function toggleCompletada(index) {
+      tareas[index].completada = !tareas[index].completada;
+      guardarYRenderizar();
+    }
+
+    function eliminarTarea(index) {
+      tareas.splice(index, 1);
+      guardarYRenderizar();
+    }
+
+    function guardarYRenderizar() {
+      localStorage.setItem("tareas", JSON.stringify(tareas));
+      renderizarTareas();
+    }
+
+    renderizarTareas();
+  </script>
+</body>
+</html>
