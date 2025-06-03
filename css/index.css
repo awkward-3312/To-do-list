@@ -1,204 +1,144 @@
 :root {
-    --color-lila: #CDB4DB;
-    --color-rosa-claro: #FFC8DD;
-    --color-rosa: #FFAFCC;
-    --color-azul-claro: #BDE0FE;
-    --color-azul-suave: #A2D2FF;
+  --color-lila: #CDB4DB;
+  --color-rosa-claro: #FFC8DD;
+  --color-rosa: #FFAFCC;
+  --color-azul-claro: #BDE0FE;
+  --color-azul-suave: #A2D2FF;
+  --color-fondo: #F9FAFB;
+  --color-texto: #2C2C2C;
 }
 
-/* Estilo general */
-body {
-    background-color: var(--color-azul-claro);
-    font-family: 'Arial', sans-serif;
-    color: #333;
-    padding: 0;
-    margin: 0;
+/* === RESET Y BASE === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Contenedor principal */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Encabezado */
-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    color: var(--color-azul-suave);
-    margin-bottom: 10px;
-}
-
-header p {
-    font-size: 1.2rem;
-    color: #666;
-}
-
-/* Sidebar */
-button.button-primary {
-    background-color: var(--color-lila);
-    color: white;
-    padding: 10px;
-    margin-bottom: 12px;
-    width: 100%;
-    border-radius: 8px;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-button.button-primary:hover {
-    background-color: var(--color-rosa);
-}
-
-button.button-secondary {
-    background-color: var(--color-azul-suave);
-    color: white;
-    padding: 10px;
-    margin-bottom: 12px;
-    width: 100%;
-    border-radius: 8px;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-button.button-secondary:hover {
-    background-color: var(--color-azul-claro);
+html, body {
+  height: 100%;
+  font-family: 'Poppins', 'Nunito', sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
 }
 
 button {
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  font-family: inherit;
+  font-size: 1rem;
 }
 
-/* Estilo del modal */
+/* === SIDEBAR === */
+aside {
+  border-right: 1px solid #e5e7eb;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  width: 100%;
+  background-color: transparent;
+  color: var(--color-texto);
+  border-radius: 0.5rem;
+  text-align: left;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.nav-btn:hover {
+  background-color: var(--color-azul-claro);
+  color: white;
+}
+
+.nav-btn.active {
+  background-color: var(--color-lila);
+  color: white;
+}
+
+/* === TAGS === */
+.tag {
+  background-color: var(--color-azul-suave);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+}
+
+.tag-add {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* === MODAL === */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
 }
 
 .modal-content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1001;
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  position: relative;
 }
 
 .close-modal {
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: #aaa;
-    transition: color 0.3s;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.3s ease;
 }
 
 .close-modal:hover {
-    color: #333;
+  color: #333;
 }
 
-/* Estilo para las listas de tareas */
-ul#listContainer {
-    list-style-type: none;
-    padding: 0;
+/* === BOTONES === */
+.button-secondary {
+  background-color: var(--color-azul-suave);
+  color: white;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-ul#listContainer li {
-    background-color: var(--color-rosa-claro);
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    transition: background-color 0.3s ease;
+.button-secondary:hover {
+  background-color: var(--color-azul-claro);
 }
 
-ul#listContainer li:hover {
-    background-color: var(--color-rosa);
+/* === TRANSICIONES === */
+.transition-all {
+  transition: all 0.3s ease-in-out;
 }
 
-/* Estilo para las tareas */
-#taskList {
-    padding: 0;
+/* === LISTAS DINÁMICAS === */
+#listContainer button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  color: white;
+  width: 100%;
+  border: none;
+  background-color: var(--color-lila);
+  transition: background-color 0.2s ease;
 }
 
-#taskList .task {
-    background-color: white;
-    padding: 1.5rem;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-#taskList .task button {
-    background-color: var(--color-rosa);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-#taskList .task button:hover {
-    background-color: var(--color-rosa-claro);
-}
-
-/* Estilo para el calendario */
-#calendar {
-    background-color: white;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilo general de los botones */
-button,
-input[type="text"],
-input[type="color"] {
-    border-radius: 8px;
-    padding: 10px;
-    width: 100%;
-}
-
-input[type="text"],
-input[type="color"] {
-    border: 2px solid #ccc;
-    margin-bottom: 12px;
-}
-
-input[type="text"]:focus,
-input[type="color"]:focus {
-    border-color: var(--color-lila);
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-    }
-
-    .flex {
-        flex-direction: column;
-    }
-
-    .w-1/4 {
-        width: 100%;
-    }
-
-    .w-3/4 {
-        width: 100%;
-    }
-
-    header h1 {
-        font-size: 2rem;
-    }
+#listContainer button:hover {
+  background-color: var(--color-rosa);
 }
