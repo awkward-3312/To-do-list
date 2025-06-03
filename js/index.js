@@ -3,6 +3,7 @@ let currentSection = null;
 let customLists = []; // Cada lista: { id, name, color }
 let tasksByList = {};  // { listId: [{ id, title, date }] }
 let stickyNotes = []; // Sticky notes individuales
+let currentListId = null;
 
 // === Navegación entre secciones ===
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -70,6 +71,7 @@ function addList() {
 
 function closeModal() {
   document.getElementById('addListModal').classList.add('hidden');
+  document.getElementById('addTaskModal').classList.add('hidden');
 }
 
 function saveList() {
@@ -91,6 +93,21 @@ function saveList() {
   saveToLocalStorage();
 }
 
+function saveTask() {
+  const titleInput = document.getElementById('newTaskTitle');
+  const dateInput = document.getElementById('newTaskDate');
+  const title = titleInput.value.trim();
+  const date = dateInput.value;
+
+  if (!title || !date || !currentListId) return alert('Completa todos los campos.');
+
+  addTaskToList(currentListId, title, date);
+  titleInput.value = '';
+  dateInput.value = '';
+  closeModal();
+  saveToLocalStorage();
+}
+
 function renderCustomLists() {
   const container = document.getElementById('listContainer');
   container.innerHTML = '';
@@ -104,14 +121,8 @@ function renderCustomLists() {
     btn.style.backgroundColor = list.color;
     btn.textContent = list.name;
     btn.onclick = () => {
-      const task = prompt(`Añadir tarea para "${list.name}" (con fecha YYYY-MM-DD):`);
-      if (task) {
-        const date = prompt('¿Fecha para esta tarea?');
-        if (date) {
-          addTaskToList(list.id, task, date);
-          saveToLocalStorage();
-        }
-      }
+      currentListId = list.id;
+      document.getElementById('addTaskModal').classList.remove('hidden');
     };
 
     const del = document.createElement('button');
