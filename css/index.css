@@ -1,335 +1,108 @@
-/* === RESET Y BASE === */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', 'Nunito', sans-serif;
+:root {
+    --color-lila: #CDB4DB;
+    --color-rosa-claro: #FFC8DD;
+    --color-rosa: #FFAFCC;
+    --color-azul-claro: #BDE0FE;
+    --color-azul-suave: #A2D2FF;
 }
 
+/* Estilo general */
 body {
-  background-color: #BDE0FE;
-  color: #2c2c2c;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px 20px;
+    background-color: #f3f4f6;
+    font-family: 'Arial', sans-serif;
 }
 
-/* === CONTENEDOR GENERAL === */
-.contenedor {
-  background-color: #fff;
-  border-radius: 20px;
-  padding: 40px;
-  width: 100%;
-  max-width: 800px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  position: relative;
+/* Estilo del contenedor principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* === HEADER === */
-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
+/* Encabezado */
 header h1 {
-  font-size: 2.2rem;
-  color: #A2D2FF;
+    font-size: 2rem;
+    color: var(--color-azul-claro);
 }
 
-header p {
-  font-size: 1rem;
-  color: #555;
-  margin-top: 8px;
+/* Estilo del Sidebar */
+button.button-primary {
+    background-color: var(--color-lila);
+    color: white;
 }
 
-/* === FILTROS === */
-.filtros {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 25px;
+button.button-primary:hover {
+    background-color: var(--color-rosa);
 }
 
-.filtros select,
-.filtros button,
-.filtros input {
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 2px solid #CDB4DB;
-  background: #fff;
-  font-size: 0.95rem;
-  cursor: pointer;
+button.button-secondary {
+    background-color: var(--color-azul-suave);
+    color: white;
 }
 
-.filtros button:hover {
-  background-color: #FFC8DD;
+button.button-secondary:hover {
+    background-color: var(--color-azul-claro);
 }
 
-/* === AGREGAR TAREA === */
-.agregar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 35px;
-  justify-content: center;
+button {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.agregar input,
-.agregar select {
-  flex: 1 1 200px;
-  padding: 12px;
-  border-radius: 10px;
-  border: 2px solid #CDB4DB;
-  font-size: 0.95rem;
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
-.agregar button {
-  padding: 12px 20px;
-  background-color: #FFAFCC;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
+.modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
 }
 
-.agregar button:hover {
-  background-color: #FFC8DD;
+.close-modal {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #aaa;
+    transition: color 0.3s;
 }
 
-/* === SECCIONES DE TAREAS === */
-.bloque {
-  margin-bottom: 30px;
+.close-modal:hover {
+    color: #333;
 }
 
-.bloque h2 {
-  font-size: 1.4rem;
-  margin-bottom: 16px;
-  color: #2c2c2c;
+/* Estilo para los elementos de la lista */
+ul#listContainer {
+    list-style-type: none;
+    padding: 0;
 }
 
-/* === LISTA DE TAREAS === */
-.lista {
-  list-style: none;
-  padding: 0;
+ul#listContainer li {
+    background-color: var(--color-rosa-claro);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }
 
-.lista li {
-  background-color: #CDB4DB;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: 0.3s;
+button {
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
 }
 
-.lista li span {
-  flex-grow: 1;
-  cursor: pointer;
-}
-
-.lista li.completed span {
-  text-decoration: line-through;
-  color: #666;
-}
-
-.lista .delete {
-  background: none;
-  border: none;
-  color: #e74c3c;
-  font-size: 1.1rem;
-  cursor: pointer;
-}
-
-/* === INDICADORES === */
-.indicadores {
-  font-size: 0.95rem;
-  font-weight: bold;
-  text-align: center;
-  background: #FFC8DD;
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 10px;
-}
-
-/* === BOTÓN FLOTANTE === */
-.boton-flotante {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background-color: #FFAFCC;
-  color: #2c2c2c;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  cursor: pointer;
-  transition: background-color 0.3s;
-  z-index: 100;
-}
-
-.boton-flotante:hover {
-  background-color: #FFC8DD;
-}
-
-/* === CALENDARIO PANEL === */
-.calendario {
-  flex: 1;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.calendario-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.calendario-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-}
-
-.calendario-grid div {
-  background-color: #BDE0FE;
-  padding: 12px;
-  border-radius: 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.calendario-grid div:hover {
-  background-color: #A2D2FF;
-}
-
-.detalle-tareas-dia {
-  margin-top: 30px;
-  background-color: #f1f1f1;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.boton-volver {
-  background-color: #FFC8DD;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-
-.boton-volver:hover {
-  background-color: #FFAFCC;
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
-  .agregar {
-    flex-direction: column;
-  }
-
-  .filtros {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .boton-flotante {
-    bottom: 16px;
-    right: 16px;
-  }
-
-  .calendario-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .calendario-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* === ANIMACIÓN AL AGREGAR TAREA === */
-.fade-in {
-  animation: fadeIn 0.4s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* === RESALTADO TEMPORAL AL COMPLETAR TAREA === */
-.highlight {
-  background-color: #BDE0FE !important;
-  transition: background-color 0.4s ease;
-}
-
-/* === LAYOUT FLEX === */
-.layout {
-  display: flex;
-  gap: 20px;
-}
-
-/* === SIDEBAR === */
-.sidebar {
-  min-width: 200px;
-  background-color: #CDB4DB;
-  border-radius: 16px;
-  padding: 30px 20px;
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.sidebar h2 {
-  color: #fff;
-  font-size: 1.4rem;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.sidebar nav ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar nav li {
-  margin-bottom: 14px;
-}
-
-.sidebar nav a {
-  text-decoration: none;
-  color: #fff;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  transition: background 0.3s;
+button:hover {
+    transition: background-color 0.3s ease;
 }
 
 .sidebar nav a.activo,
