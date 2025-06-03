@@ -1,200 +1,104 @@
-const inputTarea = document.getElementById("nueva-tarea");
-const listaHoy = document.getElementById("lista-hoy");
-const listaManana = document.getElementById("lista-manana");
-const listaSemana = document.getElementById("lista-semana");
-const listaCompletadas = document.getElementById("lista-completadas");
-const selectCategoria = document.getElementById("categoria");
-const selectPrioridad = document.getElementById("prioridad");
-const selectSeccion = document.getElementById("seccion");
-const filtroCategoria = document.getElementById("filtro-categoria");
-const inputFecha = document.getElementById("fecha-personalizada");
-const progresoDia = document.getElementById("progreso-dia");
-const progresoTotal = document.getElementById("progreso-total");
+let taskLists = []; // Arreglo para las listas
+let tasks = {}; // Tareas por lista
+let selectedList = null; // Lista seleccionada
 
-const panelPrincipal = document.getElementById("panel-principal");
-const panelCalendario = document.getElementById("calendario-panel");
-const panelCompletadas = document.getElementById("panel-completadas");
+// Agregar una nueva lista
+const addList = () => {
+    const listName = prompt("Nombre de la lista:");
+    if (listName) {
+        const listColor = prompt("Elige un color para la lista (en formato hexadecimal):");
+        const listId = Date.now();
+        taskLists.push({
+            id: listId,
+            name: listName,
+            color: listColor || '#BDE0FE' // Color por defecto
+        });
+        tasks[listId] = []; // Inicializar arreglo de tareas vacías
+        renderLists();
+    }
+};
 
-const botonCalendario = document.getElementById("btn-calendario");
-const botonVolver = document.getElementById("btn-volver");
-const botonCompletadas = document.getElementById("btn-completadas");
-const botonTareas = document.getElementById("btn-tareas");
+// Renderizar listas
+const renderLists = () => {
+    const listContainer = document.getElementById("listContainer");
+    listContainer.innerHTML = ''; // Limpiar las listas actuales
 
-let tareas = [];
+    taskLists.forEach(list => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+            <button onclick="selectList(${list.id})" style="background-color: ${list.color};" class="w-full py-2 mb-2 text-white rounded-lg">
+                ${list.name}
+            </button>
+        `;
+        listContainer.appendChild(listItem);
+    });
+};
 
-function agregarTarea() {
-  const texto = inputTarea.value.trim();
-  const categoria = selectCategoria.value.trim();
-  const prioridad = selectPrioridad.value;
-  const seccion = selectSeccion.value;
-  const fecha = inputFecha.value ? formatearFecha(inputFecha.value) : obtenerFechaHoy();
+// Seleccionar una lista y cargar las tareas
+const selectList = (listId) => {
+    selectedList = listId;
+    renderTasks();
+};
 
-  if (!texto) return;
+// Renderizar tareas de la lista seleccionada
+const renderTasks = () => {
+    const taskListContainer = document.getElementById("taskList");
+    taskListContainer.innerHTML = ''; // Limpiar tareas actuales
 
-  const nueva = {
-    texto,
-    completada: false,
-    categoria,
-    prioridad,
-    seccion,
-    fecha
-  };
-
-  tareas.push(nueva);
-  inputTarea.value = "";
-  inputFecha.value = "";
-  renderizarTareas();
-  renderizarCalendario();
-}
-
-function formatearFecha(fechaISO) {
-  const [anio, mes, dia] = fechaISO.split("-");
-  return `${dia}-${mes}-${anio}`;
-}
-
-function obtenerFechaHoy() {
-  const hoy = new Date();
-  const dia = String(hoy.getDate()).padStart(2, '0');
-  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-  const anio = hoy.getFullYear();
-  return `${dia}-${mes}-${anio}`;
-}
-
-function toggleCompletada(index) {
-  tareas[index].completada = !tareas[index].completada;
-  renderizarTareas();
-  renderizarCalendario();
-}
-
-function eliminarTarea(index) {
-  tareas.splice(index, 1);
-  renderizarTareas();
-  renderizarCalendario();
-}
-
-filtroCategoria.addEventListener("input", renderizarTareas);
-
-function renderizarTareas() {
-  listaHoy.innerHTML = "";
-  listaManana.innerHTML = "";
-  listaSemana.innerHTML = "";
-  listaCompletadas.innerHTML = "";
-
-  let completadasHoy = 0;
-  let totalHoy = 0;
-  let totalCompletadas = 0;
-
-  tareas.forEach((tarea, index) => {
-    if (filtroCategoria.value && !tarea.categoria.toLowerCase().includes(filtroCategoria.value.toLowerCase())) return;
-
-    const li = document.createElement("li");
-    li.setAttribute("data-categoria", tarea.categoria);
-    li.setAttribute("data-prioridad", tarea.prioridad);
-    if (tarea.completada) li.classList.add("completed");
-    li.classList.add("fade-in");
-
-    const span = document.createElement("span");
-    span.textContent = `${tarea.texto} (${tarea.fecha})`;
-    span.onclick = () => toggleCompletada(index);
-
-    const btnEliminar = document.createElement("button");
-    btnEliminar.classList.add("delete");
-    btnEliminar.innerHTML = '<i class="fa-solid fa-trash"></i>';
-    btnEliminar.onclick = () => eliminarTarea(index);
-
-    li.append(span, btnEliminar);
-
-    if (tarea.completada) {
-      listaCompletadas.appendChild(li);
-      totalCompletadas++;
-      return;
+    if (selectedList === null) {
+        taskListContainer.innerHTML = '<p class="text-gray-500">Selecciona una lista para ver las tareas.</p>';
+        return;
     }
 
-    if (tarea.seccion === "hoy") {
-      listaHoy.appendChild(li);
-      totalHoy++;
-      if (tarea.completada) completadasHoy++;
-    } else if (tarea.seccion === "manana") {
-      listaManana.appendChild(li);
-    } else if (tarea.seccion === "semana") {
-      listaSemana.appendChild(li);
+    const taskList = tasks[selectedList];
+    taskList.forEach(task => {
+        const taskItem = document.createElement("div");
+        taskItem.className = 'p-4 mb-4 bg-white rounded-lg shadow-lg';
+        taskItem.innerHTML = `
+            <span>${task.description}</span>
+            <button onclick="deleteTask(${task.id})" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 ml-4">Eliminar</button>
+        `;
+        taskListContainer.appendChild(taskItem);
+    });
+};
+
+// Agregar tarea
+const addTask = (description) => {
+    if (selectedList === null) {
+        alert('Selecciona una lista primero');
+        return;
     }
-  });
 
-  progresoDia.textContent = `Completadas hoy: ${completadasHoy} / ${totalHoy}`;
-  const totalTareas = tareas.length;
-  const progreso = totalTareas ? Math.round((totalCompletadas / totalTareas) * 100) : 0;
-  progresoTotal.textContent = `Progreso total semanal: ${progreso}%`;
-}
+    const newTask = {
+        id: Date.now(),
+        description: description
+    };
+    tasks[selectedList].push(newTask);
+    renderTasks();
+};
 
-// === CALENDARIO ===
-function renderizarCalendario() {
-  const grid = document.getElementById("calendario-grid");
-  if (!grid) return;
-  grid.innerHTML = "";
+// Eliminar tarea
+const deleteTask = (taskId) => {
+    tasks[selectedList] = tasks[selectedList].filter(task => task.id !== taskId);
+    renderTasks();
+};
 
-  for (let i = 1; i <= 31; i++) {
-    const diaStr = String(i).padStart(2, "0");
-    const celda = document.createElement("div");
-    celda.classList.add("celda-dia");
-    celda.textContent = diaStr;
-    celda.onclick = () => mostrarTareasDelDia(diaStr);
-    grid.appendChild(celda);
-  }
-}
-
-function mostrarTareasDelDia(diaSeleccionado) {
-  const detalles = document.getElementById("detalle-tareas-dia");
-  if (!detalles) return;
-
-  const tareasDia = tareas.filter(t => t.fecha.startsWith(diaSeleccionado));
-
-  detalles.innerHTML = `<h3>Tareas del día ${diaSeleccionado}</h3>`;
-
-  if (tareasDia.length === 0) {
-    detalles.innerHTML += "<p>No hay tareas asignadas para este día.</p>";
-    return;
-  }
-
-  const ul = document.createElement("ul");
-  tareasDia.forEach(t => {
-    const li = document.createElement("li");
-    li.textContent = `${t.texto} (${t.categoria})`;
-    ul.appendChild(li);
-  });
-  detalles.appendChild(ul);
-}
-
-// Alternar paneles
-botonCalendario.addEventListener("click", () => {
-  panelPrincipal.style.display = "none";
-  panelCompletadas.style.display = "none";
-  panelCalendario.style.display = "block";
+// Inicializar el calendario con FullCalendar
+document.addEventListener("DOMContentLoaded", () => {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: [
+            { title: 'Tarea de prueba', start: '2023-06-01', end: '2023-06-02' }
+        ]
+    });
+    calendar.render();
 });
 
-botonVolver.addEventListener("click", () => {
-  panelPrincipal.style.display = "block";
-  panelCalendario.style.display = "none";
-  panelCompletadas.style.display = "none";
-});
-
-botonCompletadas.addEventListener("click", () => {
-  panelPrincipal.style.display = "none";
-  panelCalendario.style.display = "none";
-  panelCompletadas.style.display = "block";
-});
-
-botonTareas.addEventListener("click", () => {
-  panelPrincipal.style.display = "block";
-  panelCalendario.style.display = "none";
-  panelCompletadas.style.display = "none";
-});
-
-function focusInput() {
-  inputTarea.scrollIntoView({ behavior: "smooth" });
-  inputTarea.focus();
-}
-
-// Inicializar
-renderizarTareas();
-renderizarCalendario();
+// Cargar la vista de listas al inicio
+renderLists();
