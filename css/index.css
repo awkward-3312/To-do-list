@@ -145,31 +145,6 @@ header p {
   cursor: pointer;
 }
 
-/* === CATEGORÍA POR COLOR === */
-li[data-categoria="regulatorio"] {
-  border-left: 6px solid #FFAFCC;
-}
-li[data-categoria="academico"] {
-  border-left: 6px solid #A2D2FF;
-}
-li[data-categoria="personal"] {
-  border-left: 6px solid #CDB4DB;
-}
-
-/* === PRIORIDAD ICONO === */
-li[data-prioridad="alta"] span::before {
-  content: "🔥 ";
-  color: #e74c3c;
-}
-li[data-prioridad="media"] span::before {
-  content: "⏳ ";
-  color: #f39c12;
-}
-li[data-prioridad="baja"] span::before {
-  content: "🧊 ";
-  color: #3498db;
-}
-
 /* === INDICADORES === */
 .indicadores {
   font-size: 0.95rem;

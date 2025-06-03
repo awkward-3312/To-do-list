@@ -9,6 +9,11 @@ const filtroCategoria = document.getElementById("filtro-categoria");
 const progresoDia = document.getElementById("progreso-dia");
 const progresoTotal = document.getElementById("progreso-total");
 
+const panelPrincipal = document.getElementById("panel-principal");
+const panelCalendario = document.getElementById("calendario-panel");
+const botonCalendario = document.getElementById("btn-calendario");
+const botonVolver = document.getElementById("btn-volver");
+
 let tareas = [];
 
 function agregarTarea() {
@@ -16,7 +21,7 @@ function agregarTarea() {
   const categoria = selectCategoria.value;
   const prioridad = selectPrioridad.value;
   const seccion = selectSeccion.value;
-  const fecha = new Date().toLocaleDateString('es-ES');
+  const fecha = new Date().toLocaleDateString('es-ES'); // DD/MM/YYYY
 
   if (!texto) return;
 
@@ -38,6 +43,7 @@ function agregarTarea() {
 function toggleCompletada(index) {
   tareas[index].completada = !tareas[index].completada;
   renderizarTareas();
+  renderizarCalendario();
 
   const li = document.querySelectorAll("li")[index];
   if (li) {
@@ -102,26 +108,27 @@ function renderizarTareas() {
   progresoTotal.textContent = `📊 Progreso total semanal: ${progreso}%`;
 }
 
+// === CALENDARIO ===
 function renderizarCalendario() {
-  const contenedor = document.getElementById("calendario-grid");
-  if (!contenedor) return;
-  contenedor.innerHTML = "";
+  const grid = document.getElementById("calendario-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
 
-  const diasMes = 30; // simplificado
+  const diasMes = 30;
   for (let i = 1; i <= diasMes; i++) {
-    const dia = document.createElement("div");
-    dia.textContent = i;
-    dia.onclick = () => mostrarTareasDelDia(i);
-    contenedor.appendChild(dia);
+    const celda = document.createElement("div");
+    celda.textContent = i;
+    celda.onclick = () => mostrarTareasDelDia(i);
+    grid.appendChild(celda);
   }
 }
 
 function mostrarTareasDelDia(diaSeleccionado) {
-  const detalles = document.getElementById("detalle-dia");
+  const detalles = document.getElementById("detalle-tareas-dia");
   if (!detalles) return;
 
   const tareasDia = tareas.filter(t => {
-    const fecha = new Date(t.fecha).getDate();
+    const fecha = parseInt(t.fecha.split("/")[0]); // DD
     return fecha === diaSeleccionado;
   });
 
@@ -141,10 +148,22 @@ function mostrarTareasDelDia(diaSeleccionado) {
   detalles.appendChild(ul);
 }
 
+// === Alternar paneles ===
+botonCalendario.addEventListener("click", () => {
+  panelPrincipal.style.display = "none";
+  panelCalendario.style.display = "block";
+});
+
+botonVolver.addEventListener("click", () => {
+  panelPrincipal.style.display = "block";
+  panelCalendario.style.display = "none";
+});
+
 function focusInput() {
   inputTarea.scrollIntoView({ behavior: "smooth" });
   inputTarea.focus();
 }
 
+// Inicializar
 renderizarTareas();
 renderizarCalendario();
