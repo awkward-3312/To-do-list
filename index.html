@@ -1,100 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi To-Do List</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>To-Do List</title>
 
-    <!-- Enlace al archivo CSS -->
-    <link rel="stylesheet" href="css/index.css">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a2c5cb0a1b.js" crossorigin="anonymous"></script>
+
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="css/index.css" />
 </head>
 
-<body class="font-sans text-gray-800">
+<body class="bg-[#BDE0FE] text-gray-800 font-sans">
+  <div class="flex h-screen overflow-hidden">
 
-    <div class="container p-6">
-
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-indigo-600">Mi To-Do List</h1>
-            <p class="text-lg text-gray-500">Organiza tu día de manera sencilla y eficiente.</p>
-        </header>
-
-        <!-- Sidebar y Tareas -->
-        <div class="flex space-x-6">
-
-            <!-- Sidebar -->
-            <div class="w-1/4 bg-white shadow-lg rounded-lg p-4">
-                <h3 class="text-xl font-semibold text-indigo-600 mb-4">Menú</h3>
-                <ul>
-                    <li>
-                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
-                            Upcoming
-                        </button>
-                    </li>
-                    <li>
-                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
-                            Today
-                        </button>
-                    </li>
-                    <li>
-                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
-                            Calendar
-                        </button>
-                    </li>
-                    <li>
-                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
-                            Sticky Wall
-                        </button>
-                    </li>
-                </ul>
-
-                <!-- Listas -->
-                <h3 class="text-xl font-semibold text-indigo-600 mt-6 mb-4">Listas</h3>
-                <ul id="listContainer" class="space-y-4">
-                    <!-- Listas dinámicas -->
-                </ul>
-
-                <button onclick="addList()" class="button-secondary w-full p-2 mt-4 rounded-lg transition-all">
-                    Añadir Lista
-                </button>
-            </div>
-
-            <!-- Main Content -->
-            <div class="w-3/4 bg-white shadow-lg rounded-lg p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-semibold text-indigo-600">Tareas</h3>
-                    <button class="button-primary p-2 rounded-lg">Agregar tarea</button>
-                </div>
-
-                <!-- Tareas -->
-                <div id="taskList" class="space-y-4">
-                    <!-- Tareas dinámicas -->
-                </div>
-            </div>
-
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white shadow-lg p-6 flex flex-col justify-between">
+      <div>
+        <!-- Logo / Encabezado -->
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold text-[#CDB4DB] tracking-wide flex items-center gap-2">
+            <i class="fas fa-check-circle text-[#FFAFCC]"></i> Mi To-Do List
+          </h1>
         </div>
 
-    </div>
-
-    <!-- Modal para Agregar Lista -->
-    <div id="addListModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <span onclick="closeModal()" class="close-modal">&times;</span>
-            <h3 class="text-xl font-semibold text-indigo-600 mb-4">Nueva Lista</h3>
-            <input type="text" id="newListName" placeholder="Nombre de la lista" class="w-full p-2 mb-4 border rounded-lg">
-            <input type="color" id="listColor" class="w-full p-2 mb-4 border rounded-lg" />
-            <button onclick="saveList()" class="button-secondary w-full p-2 rounded-lg transition-all">
-                Guardar Lista
-            </button>
+        <!-- Buscar -->
+        <div class="mb-6">
+          <input type="text" placeholder="Buscar..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#A2D2FF]" />
         </div>
-    </div>
 
-    <!-- Enlace al archivo JS -->
-    <script src="js/index.js"></script>
+        <!-- Navegación -->
+        <nav>
+          <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Tasks</h2>
+          <ul class="space-y-2 mb-6">
+            <li><button class="nav-btn" data-section="upcoming"><i class="fas fa-forward mr-2"></i> Upcoming</button></li>
+            <li><button class="nav-btn" data-section="today"><i class="fas fa-calendar-day mr-2"></i> Today</button></li>
+            <li><button class="nav-btn" data-section="calendar"><i class="fas fa-calendar-alt mr-2"></i> Calendar</button></li>
+            <li><button class="nav-btn" data-section="sticky"><i class="fas fa-sticky-note mr-2"></i> Sticky Wall</button></li>
+          </ul>
+
+          <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Lists</h2>
+          <ul id="listContainer" class="space-y-2 mb-4">
+            <!-- Listas dinámicas -->
+          </ul>
+          <button class="text-sm text-[#A2D2FF] hover:text-[#FFAFCC] transition-all" onclick="addList()">
+            <i class="fas fa-plus mr-2"></i> Add New List
+          </button>
+
+          <h2 class="text-xs font-semibold text-gray-500 uppercase mt-6 mb-2">Tags</h2>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Tag 1</span>
+            <span class="tag">Tag 2</span>
+            <button class="tag-add text-xs text-[#FFAFCC] hover:underline">+ Add Tag</button>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Panel principal -->
+    <main class="flex-1 p-6 overflow-y-auto" id="mainPanel">
+      <div class="text-center text-gray-500 italic">Selecciona una sección para comenzar...</div>
+    </main>
+  </div>
+
+  <!-- Modal de lista -->
+  <div id="addListModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <span onclick="closeModal()" class="close-modal">&times;</span>
+      <h3 class="text-xl font-semibold text-[#CDB4DB] mb-4">Nueva Lista</h3>
+      <input type="text" id="newListName" placeholder="Nombre de la lista" class="w-full p-2 mb-4 border rounded-lg">
+      <input type="color" id="listColor" class="w-full p-2 mb-4 border rounded-lg" />
+      <button onclick="saveList()" class="button-secondary w-full p-2 rounded-lg transition-all">Guardar Lista</button>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="js/index.js"></script>
 </body>
-
 </html>
