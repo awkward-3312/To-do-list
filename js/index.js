@@ -33,8 +33,50 @@ function renderMainPanel(section) {
     panel.innerHTML = `<h2 class="text-2xl font-bold text-[#FFAFCC] mb-4">Upcoming Tasks</h2><p>✨ Aquí verás tareas próximas.</p>`;
   } else if (section === 'today') {
     panel.innerHTML = `<h2 class="text-2xl font-bold text-[#FFC8DD] mb-4">Today's Tasks</h2><p>🗓️ Aquí irán las tareas de hoy.</p>`;
-  } else if (section === 'calendar') {
-    panel.innerHTML = `<h2 class="text-2xl font-bold text-[#A2D2FF] mb-4">Calendar View</h2><p>📅 Aquí se mostrará el calendario por día, semana o mes.</p>`;
+} else if (section === 'calendar') {
+  panel.innerHTML = `
+    <h2 class="text-2xl font-bold text-[#A2D2FF] mb-4 flex items-center gap-2">
+      <i class="fas fa-calendar-alt text-[#A2D2FF]"></i> Calendar View
+    </h2>
+    <div id="calendar" class="bg-white rounded-lg shadow p-4"></div>
+  `;
+
+  const calendarEl = document.getElementById('calendar');
+
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    events: [
+      {
+        title: 'Research content ideas',
+        start: '2025-06-04',
+        color: '#FFC8DD'
+      },
+      {
+        title: 'Create guest DB',
+        start: '2025-06-06',
+        color: '#CDB4DB'
+      },
+      {
+        title: 'Driver’s license',
+        start: '2025-06-07T11:00:00',
+        color: '#A2D2FF'
+      },
+      {
+        title: 'Business lunch',
+        start: '2025-06-09T13:00:00',
+        color: '#FFAFCC'
+      }
+    ]
+  });
+
+  calendar.render();
+}
   } else if (section === 'sticky') {
     panel.innerHTML = `<h2 class="text-2xl font-bold text-[#CDB4DB] mb-4">Sticky Wall</h2><p>📌 Aquí irán tus notas visuales.</p>`;
   } else {
