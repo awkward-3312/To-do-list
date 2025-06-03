@@ -2,6 +2,7 @@
 let currentSection = null;
 let customLists = []; // Cada lista: { id, name, color }
 let tasksByList = {};  // { listId: [{ id, title, date }] }
+let stickyNotes = []; // Sticky notes individuales
 
 // === Navegación entre secciones ===
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -19,17 +20,14 @@ function setActiveSection(section) {
   renderMainPanel(section);
 }
 
-// === Render de secciones ===
 function renderMainPanel(section) {
   const panel = document.getElementById('mainPanel');
   panel.innerHTML = '';
 
   if (section === 'upcoming') {
     panel.innerHTML = `<h2 class="text-2xl font-bold text-[#FFAFCC] mb-4">Upcoming Tasks</h2><p>✨ Aquí verás tareas próximas.</p>`;
-
   } else if (section === 'today') {
     panel.innerHTML = `<h2 class="text-2xl font-bold text-[#FFC8DD] mb-4">Today's Tasks</h2><p>🗓️ Aquí irán las tareas de hoy.</p>`;
-
   } else if (section === 'calendar') {
     panel.innerHTML = `
       <h2 class="text-2xl font-bold text-[#A2D2FF] mb-4 flex items-center gap-2">
@@ -51,7 +49,6 @@ function renderMainPanel(section) {
     });
 
     calendar.render();
-
   } else if (section === 'sticky') {
     panel.innerHTML = `
       <h2 class="text-2xl font-bold text-[#CDB4DB] mb-4 flex items-center gap-2">
@@ -62,13 +59,11 @@ function renderMainPanel(section) {
     `;
 
     renderStickyNotes();
-
   } else {
     panel.innerHTML = `<p class="text-center text-gray-500 italic">Selecciona una sección para comenzar...</p>`;
   }
 }
 
-// === Modal para listas ===
 function addList() {
   document.getElementById('addListModal').classList.remove('hidden');
 }
@@ -93,6 +88,7 @@ function saveList() {
   colorInput.value = '#BDE0FE';
   closeModal();
   renderCustomLists();
+  saveToLocalStorage();
 }
 
 function renderCustomLists() {
@@ -100,19 +96,42 @@ function renderCustomLists() {
   container.innerHTML = '';
 
   customLists.forEach(list => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex items-center justify-between';
+
     const btn = document.createElement('button');
-    btn.className = 'flex items-center gap-2 px-3 py-2 rounded-lg text-white font-medium text-sm';
+    btn.className = 'flex-grow px-3 py-2 rounded-lg text-white font-medium text-sm text-left';
     btn.style.backgroundColor = list.color;
     btn.textContent = list.name;
     btn.onclick = () => {
-      const task = prompt(`Añadir tarea para la lista "${list.name}" (con fecha YYYY-MM-DD):`);
+      const task = prompt(`Añadir tarea para "${list.name}" (con fecha YYYY-MM-DD):`);
       if (task) {
-        const date = prompt('¿Fecha para esta tarea? (YYYY-MM-DD)');
-        if (date) addTaskToList(list.id, task, date);
+        const date = prompt('¿Fecha para esta tarea?');
+        if (date) {
+          addTaskToList(list.id, task, date);
+          saveToLocalStorage();
+        }
       }
     };
-    container.appendChild(btn);
+
+    const del = document.createElement('button');
+    del.innerHTML = '🗑️';
+    del.className = 'ml-2 text-red-500 hover:text-red-700';
+    del.onclick = () => deleteList(list.id);
+
+    wrapper.appendChild(btn);
+    wrapper.appendChild(del);
+    container.appendChild(wrapper);
   });
+}
+
+function deleteList(id) {
+  if (confirm('¿Eliminar esta lista?')) {
+    customLists = customLists.filter(l => l.id !== id);
+    delete tasksByList[id];
+    renderCustomLists();
+    saveToLocalStorage();
+  }
 }
 
 function addTaskToList(listId, title, date) {
@@ -131,14 +150,12 @@ function getAllTasksAsEvents() {
   return events;
 }
 
-// === Sticky Wall ===
-let stickyNotes = [];
-
 function addStickyNote() {
   const text = prompt('Escribe tu nota:');
   if (text) {
     stickyNotes.push({ id: Date.now(), text });
     renderStickyNotes();
+    saveToLocalStorage();
   }
 }
 
@@ -151,9 +168,13 @@ function renderStickyNotes() {
     const card = document.createElement('div');
     card.className = 'bg-yellow-100 p-4 rounded-lg shadow-md relative';
     card.innerHTML = `
-      <p class="text-sm text-gray-800">${note.text}</p>
+      <textarea class="w-full bg-transparent resize-none text-sm text-gray-800 focus:outline-none">${note.text}</textarea>
       <button class="absolute top-2 right-2 text-xs text-red-500 hover:text-red-700" onclick="deleteSticky(${note.id})">×</button>
     `;
+    card.querySelector('textarea').addEventListener('input', e => {
+      note.text = e.target.value;
+      saveToLocalStorage();
+    });
     wall.appendChild(card);
   });
 }
@@ -161,9 +182,23 @@ function renderStickyNotes() {
 function deleteSticky(id) {
   stickyNotes = stickyNotes.filter(n => n.id !== id);
   renderStickyNotes();
+  saveToLocalStorage();
 }
 
-// === Inicializar ===
+function saveToLocalStorage() {
+  localStorage.setItem('customLists', JSON.stringify(customLists));
+  localStorage.setItem('tasksByList', JSON.stringify(tasksByList));
+  localStorage.setItem('stickyNotes', JSON.stringify(stickyNotes));
+}
+
+function loadFromLocalStorage() {
+  customLists = JSON.parse(localStorage.getItem('customLists')) || [];
+  tasksByList = JSON.parse(localStorage.getItem('tasksByList')) || {};
+  stickyNotes = JSON.parse(localStorage.getItem('stickyNotes')) || [];
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  loadFromLocalStorage();
   renderMainPanel(null);
+  renderCustomLists();
 });
