@@ -8,26 +8,46 @@
 
 /* Estilo general */
 body {
-    background-color: #f3f4f6;
+    background-color: var(--color-azul-claro);
     font-family: 'Arial', sans-serif;
+    color: #333;
+    padding: 0;
+    margin: 0;
 }
 
-/* Estilo del contenedor principal */
+/* Contenedor principal */
 .container {
     max-width: 1200px;
     margin: 0 auto;
 }
 
 /* Encabezado */
-header h1 {
-    font-size: 2rem;
-    color: var(--color-azul-claro);
+header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-/* Estilo del Sidebar */
+header h1 {
+    font-size: 2.5rem;
+    color: var(--color-azul-suave);
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Sidebar */
 button.button-primary {
     background-color: var(--color-lila);
     color: white;
+    padding: 10px;
+    margin-bottom: 12px;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.3s ease;
 }
 
 button.button-primary:hover {
@@ -37,6 +57,12 @@ button.button-primary:hover {
 button.button-secondary {
     background-color: var(--color-azul-suave);
     color: white;
+    padding: 10px;
+    margin-bottom: 12px;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.3s ease;
 }
 
 button.button-secondary:hover {
@@ -48,7 +74,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
-/* Modal */
+/* Estilo del modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -82,7 +108,7 @@ button {
     color: #333;
 }
 
-/* Estilo para los elementos de la lista */
+/* Estilo para las listas de tareas */
 ul#listContainer {
     list-style-type: none;
     padding: 0;
@@ -93,20 +119,86 @@ ul#listContainer li {
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 10px;
-}
-
-button {
-    padding: 10px;
-    border-radius: 8px;
-    width: 100%;
-}
-
-button:hover {
     transition: background-color 0.3s ease;
 }
 
-.sidebar nav a.activo,
-.sidebar nav a:hover {
-  background-color: #FFAFCC;
-  color: #2c2c2c;
+ul#listContainer li:hover {
+    background-color: var(--color-rosa);
+}
+
+/* Estilo para las tareas */
+#taskList {
+    padding: 0;
+}
+
+#taskList .task {
+    background-color: white;
+    padding: 1.5rem;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#taskList .task button {
+    background-color: var(--color-rosa);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+#taskList .task button:hover {
+    background-color: var(--color-rosa-claro);
+}
+
+/* Estilo para el calendario */
+#calendar {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo general de los botones */
+button,
+input[type="text"],
+input[type="color"] {
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+}
+
+input[type="text"],
+input[type="color"] {
+    border: 2px solid #ccc;
+    margin-bottom: 12px;
+}
+
+input[type="text"]:focus,
+input[type="color"]:focus {
+    border-color: var(--color-lila);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    .flex {
+        flex-direction: column;
+    }
+
+    .w-1/4 {
+        width: 100%;
+    }
+
+    .w-3/4 {
+        width: 100%;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
 }
