@@ -142,3 +142,62 @@ aside {
 #listContainer button:hover {
   background-color: var(--color-rosa);
 }
+
+/* === FULLCALENDAR === */
+#calendar {
+  font-family: 'Poppins', 'Nunito', sans-serif;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  overflow: hidden;
+}
+
+/* Header del calendario */
+.fc .fc-toolbar {
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  color: var(--color-azul-suave);
+  font-weight: 600;
+}
+
+.fc .fc-button {
+  background-color: var(--color-rosa-claro);
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.fc .fc-button:hover {
+  background-color: var(--color-rosa);
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: var(--color-lila);
+}
+
+.fc .fc-button-primary:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+}
+
+.fc .fc-daygrid-day-number {
+  color: #555;
+  font-weight: 500;
+}
+
+.fc .fc-event {
+  border: none;
+  padding: 2px 4px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
