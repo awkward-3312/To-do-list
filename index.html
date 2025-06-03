@@ -3,90 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>To-Do List</title>
+  <title>Mi Día | To-Do List</title>
 
-  <!-- Fuentes e íconos -->
+  <!-- Tipografía y FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-  <!-- CSS -->
+  <!-- CSS personalizado -->
   <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
-
   <div class="layout">
     <!-- === SIDEBAR === -->
     <aside class="sidebar">
       <h2>Mi Día</h2>
       <nav>
         <ul>
-          <li><a href="#" class="activo"><i class="fa-solid fa-list"></i> Tareas</a></li>
-          <li><a href="#"><i class="fa-solid fa-check-circle"></i> Completadas</a></li>
-          <li><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+          <li><a href="#" id="btn-tareas" class="activo"><i class="fa-solid fa-list"></i> Tareas</a></li>
+          <li><a href="#" id="btn-completadas"><i class="fa-solid fa-check-circle"></i> Completadas</a></li>
+          <li><a href="#" id="btn-dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+          <li><a href="#" id="btn-calendario"><i class="fa-solid fa-calendar-days"></i> Calendario</a></li>
         </ul>
       </nav>
     </aside>
 
     <!-- === CONTENIDO PRINCIPAL === -->
-    <div class="contenedor">
-      <!-- Encabezado -->
+    <div class="contenedor" id="panel-principal">
+      <!-- Header -->
       <header>
-        <h1>To-Do List</h1>
-        <p>¡Gestiona tus tareas de manera organizada y divertida!</p>
+        <h1><i class="fa-solid fa-clipboard-check"></i> To-Do List</h1>
+        <p>Organiza tu día con claridad y estilo</p>
       </header>
 
       <!-- Filtros -->
       <div class="filtros">
-        <select id="filtro-categoria" aria-label="Filtrar por categoría">
-          <option value="">Categoría</option>
-          <option value="regulatorio">Regulatorio</option>
-          <option value="academico">Académico</option>
-          <option value="personal">Personal</option>
-        </select>
-        <button id="boton-filtrar" aria-label="Aplicar filtro">Filtrar</button>
+        <input type="text" id="filtro-categoria" placeholder="Filtrar por categoría..." aria-label="Filtrar categoría" />
+        <button id="boton-filtrar" aria-label="Aplicar filtro"><i class="fa-solid fa-filter"></i></button>
       </div>
 
-      <!-- Formulario de nueva tarea -->
+      <!-- Formulario nueva tarea -->
       <div class="agregar">
-        <input type="text" id="nueva-tarea" placeholder="Escribe una nueva tarea..." aria-label="Tarea nueva" />
-        <select id="categoria" aria-label="Selecciona categoría">
-          <option value="regulatorio">Regulatorio</option>
-          <option value="academico">Académico</option>
-          <option value="personal">Personal</option>
-        </select>
-        <select id="prioridad" aria-label="Selecciona prioridad">
+        <input type="text" id="nueva-tarea" placeholder="Escribe una nueva tarea..." aria-label="Nueva tarea" />
+        <input type="text" id="categoria" placeholder="Categoría personalizada" aria-label="Categoría" />
+        <select id="prioridad" aria-label="Prioridad">
           <option value="alta">Alta</option>
           <option value="media">Media</option>
           <option value="baja">Baja</option>
         </select>
-        <select id="seccion" aria-label="Selecciona sección">
+        <select id="seccion" aria-label="Sección">
           <option value="hoy">Hoy</option>
           <option value="manana">Mañana</option>
           <option value="semana">Semana</option>
         </select>
-        <button onclick="agregarTarea()">Agregar Tarea</button>
+        <button onclick="agregarTarea()"><i class="fa-solid fa-plus"></i> Agregar</button>
       </div>
 
       <!-- Secciones de tareas -->
       <div class="bloque">
-        <h2>Hoy</h2>
+        <h2><i class="fa-solid fa-calendar-day"></i> Hoy</h2>
         <ul id="lista-hoy" class="lista"></ul>
         <div id="progreso-dia" class="indicadores"></div>
       </div>
 
       <div class="bloque">
-        <h2>Mañana</h2>
+        <h2><i class="fa-solid fa-calendar-plus"></i> Mañana</h2>
         <ul id="lista-manana" class="lista"></ul>
       </div>
 
       <div class="bloque">
-        <h2>Semana</h2>
+        <h2><i class="fa-solid fa-calendar-week"></i> Esta semana</h2>
         <ul id="lista-semana" class="lista"></ul>
       </div>
+    </div>
 
-      <div class="bloque">
-        <div id="progreso-total" class="indicadores"></div>
+    <!-- === PANEL DE CALENDARIO (oculto por defecto) === -->
+    <div id="calendario-panel" class="calendario" style="display: none;">
+      <div class="calendario-header">
+        <h2><i class="fa-solid fa-calendar-days"></i> Calendario de Tareas</h2>
+        <button id="btn-volver" class="boton-volver"><i class="fa-solid fa-arrow-left"></i> Volver</button>
       </div>
+      <div id="calendario-grid" class="calendario-grid"></div>
+      <div id="detalle-tareas-dia" class="detalle-tareas-dia"></div>
     </div>
   </div>
 

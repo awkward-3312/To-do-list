@@ -9,18 +9,14 @@ const filtroCategoria = document.getElementById("filtro-categoria");
 const progresoDia = document.getElementById("progreso-dia");
 const progresoTotal = document.getElementById("progreso-total");
 
-let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+let tareas = [];
 
-function guardarTareas() {
-  localStorage.setItem("tareas", JSON.stringify(tareas));
-}
-
-// === Agregar nueva tarea ===
 function agregarTarea() {
   const texto = inputTarea.value.trim();
   const categoria = selectCategoria.value;
   const prioridad = selectPrioridad.value;
   const seccion = selectSeccion.value;
+  const fecha = new Date().toLocaleDateString('es-ES');
 
   if (!texto) return;
 
@@ -30,22 +26,19 @@ function agregarTarea() {
     categoria,
     prioridad,
     seccion,
-    fecha: new Date().toISOString()
+    fecha
   };
 
   tareas.push(nueva);
   inputTarea.value = "";
-  guardarTareas();
   renderizarTareas();
+  renderizarCalendario();
 }
 
-// === Marcar como completada ===
 function toggleCompletada(index) {
   tareas[index].completada = !tareas[index].completada;
-  guardarTareas();
   renderizarTareas();
 
-  // Efecto visual de resaltado
   const li = document.querySelectorAll("li")[index];
   if (li) {
     li.classList.add("highlight");
@@ -53,17 +46,14 @@ function toggleCompletada(index) {
   }
 }
 
-// === Eliminar tarea ===
 function eliminarTarea(index) {
   tareas.splice(index, 1);
-  guardarTareas();
   renderizarTareas();
+  renderizarCalendario();
 }
 
-// === Filtro por categoría ===
 filtroCategoria.addEventListener("change", renderizarTareas);
 
-// === Renderizar todas las tareas en sus bloques ===
 function renderizarTareas() {
   listaHoy.innerHTML = "";
   listaManana.innerHTML = "";
@@ -112,11 +102,49 @@ function renderizarTareas() {
   progresoTotal.textContent = `📊 Progreso total semanal: ${progreso}%`;
 }
 
-// === Botón flotante enfoca el input ===
+function renderizarCalendario() {
+  const contenedor = document.getElementById("calendario-grid");
+  if (!contenedor) return;
+  contenedor.innerHTML = "";
+
+  const diasMes = 30; // simplificado
+  for (let i = 1; i <= diasMes; i++) {
+    const dia = document.createElement("div");
+    dia.textContent = i;
+    dia.onclick = () => mostrarTareasDelDia(i);
+    contenedor.appendChild(dia);
+  }
+}
+
+function mostrarTareasDelDia(diaSeleccionado) {
+  const detalles = document.getElementById("detalle-dia");
+  if (!detalles) return;
+
+  const tareasDia = tareas.filter(t => {
+    const fecha = new Date(t.fecha).getDate();
+    return fecha === diaSeleccionado;
+  });
+
+  detalles.innerHTML = `<h3>Tareas del día ${diaSeleccionado}</h3>`;
+
+  if (tareasDia.length === 0) {
+    detalles.innerHTML += "<p>No hay tareas asignadas para este día.</p>";
+    return;
+  }
+
+  const ul = document.createElement("ul");
+  tareasDia.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = `${t.texto} (${t.categoria})`;
+    ul.appendChild(li);
+  });
+  detalles.appendChild(ul);
+}
+
 function focusInput() {
   inputTarea.scrollIntoView({ behavior: "smooth" });
   inputTarea.focus();
 }
 
-// === Inicializar ===
 renderizarTareas();
+renderizarCalendario();

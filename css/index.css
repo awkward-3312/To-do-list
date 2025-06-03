@@ -3,10 +3,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Poppins', 'Nunito', sans-serif;
 }
 
 body {
-  font-family: 'Poppins', 'Nunito', sans-serif;
   background-color: #BDE0FE;
   color: #2c2c2c;
   min-height: 100vh;
@@ -53,7 +53,8 @@ header p {
 }
 
 .filtros select,
-.filtros button {
+.filtros button,
+.filtros input {
   padding: 10px 16px;
   border-radius: 12px;
   border: 2px solid #CDB4DB;
@@ -205,6 +206,62 @@ li[data-prioridad="baja"] span::before {
   background-color: #FFC8DD;
 }
 
+/* === CALENDARIO PANEL === */
+.calendario {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.calendario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendario-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.calendario-grid div {
+  background-color: #BDE0FE;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.calendario-grid div:hover {
+  background-color: #A2D2FF;
+}
+
+.detalle-tareas-dia {
+  margin-top: 30px;
+  background-color: #f1f1f1;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.boton-volver {
+  background-color: #FFC8DD;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.boton-volver:hover {
+  background-color: #FFAFCC;
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
   .agregar {
@@ -216,7 +273,23 @@ li[data-prioridad="baja"] span::before {
     align-items: center;
   }
 
-  /* === ANIMACIÓN AL AGREGAR TAREA === */
+  .boton-flotante {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .calendario-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .calendario-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* === ANIMACIÓN AL AGREGAR TAREA === */
 .fade-in {
   animation: fadeIn 0.4s ease-out;
 }
@@ -236,12 +309,6 @@ li[data-prioridad="baja"] span::before {
 .highlight {
   background-color: #BDE0FE !important;
   transition: background-color 0.4s ease;
-}
-
-  .boton-flotante {
-    bottom: 16px;
-    right: 16px;
-  }
 }
 
 /* === LAYOUT FLEX === */
