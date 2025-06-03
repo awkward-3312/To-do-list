@@ -1,105 +1,101 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Día | To-Do List</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi To-Do List</title>
 
-  <!-- Tipografía y FontAwesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Enlace al archivo CSS -->
+    <link rel="stylesheet" href="styles.css">
 
-  <!-- CSS personalizado -->
-  <link rel="stylesheet" href="css/index.css" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="layout">
-    <!-- === SIDEBAR === -->
-    <aside class="sidebar" aria-label="Menú principal">
-      <h2>Mi Día</h2>
-      <nav>
-        <ul>
-          <li><a href="#" id="btn-tareas" class="activo"><i class="fa-solid fa-list"></i> Tareas</a></li>
-          <li><a href="#" id="btn-completadas"><i class="fa-solid fa-check-circle"></i> Completadas</a></li>
-          <li><a href="#" id="btn-dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-          <li><a href="#" id="btn-calendario"><i class="fa-solid fa-calendar-days"></i> Calendario</a></li>
-        </ul>
-      </nav>
-    </aside>
 
-    <!-- === CONTENIDO PRINCIPAL === -->
-    <div class="contenedor" id="panel-principal" role="main">
-      <!-- Header -->
-      <header>
-        <h1><i class="fa-solid fa-clipboard-check"></i> To-Do List</h1>
-        <p>Organiza tu día con claridad y estilo</p>
-      </header>
+<body class="font-sans text-gray-800">
 
-      <!-- Filtros -->
-      <div class="filtros" role="region" aria-label="Filtro de categoría">
-        <input type="text" id="filtro-categoria" placeholder="Filtrar por categoría..." aria-label="Filtrar categoría" />
-        <button id="boton-filtrar" aria-label="Aplicar filtro"><i class="fa-solid fa-filter"></i></button>
-      </div>
+    <div class="container p-6">
 
-      <!-- Formulario nueva tarea -->
-      <div class="agregar" role="form" aria-label="Agregar nueva tarea">
-        <input type="text" id="nueva-tarea" placeholder="Escribe una nueva tarea..." aria-label="Nueva tarea" />
-        <input type="text" id="categoria" placeholder="Categoría personalizada" aria-label="Categoría personalizada" />
-        <select id="prioridad" aria-label="Seleccionar prioridad">
-          <option value="alta">Alta</option>
-          <option value="media">Media</option>
-          <option value="baja">Baja</option>
-        </select>
-        <select id="seccion" aria-label="Seleccionar sección">
-          <option value="hoy">Hoy</option>
-          <option value="manana">Mañana</option>
-          <option value="semana">Semana</option>
-        </select>
-        <input type="date" id="fecha-personalizada" aria-label="Seleccionar fecha" />
-        <button onclick="agregarTarea()"><i class="fa-solid fa-plus"></i> Agregar</button>
-      </div>
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-600">Mi To-Do List</h1>
+            <p class="text-lg text-gray-500">Organiza tu día de manera sencilla y eficiente.</p>
+        </header>
 
-      <!-- Secciones de tareas -->
-      <div class="bloque" role="region" aria-label="Tareas para hoy">
-        <h2><i class="fa-solid fa-calendar-day"></i> Hoy</h2>
-        <ul id="lista-hoy" class="lista"></ul>
-        <div id="progreso-dia" class="indicadores" aria-live="polite"></div>
-      </div>
+        <!-- Sidebar y Tareas -->
+        <div class="flex space-x-6">
 
-      <div class="bloque" role="region" aria-label="Tareas para mañana">
-        <h2><i class="fa-solid fa-calendar-plus"></i> Mañana</h2>
-        <ul id="lista-manana" class="lista"></ul>
-      </div>
+            <!-- Sidebar -->
+            <div class="w-1/4 bg-white shadow-lg rounded-lg p-4">
+                <h3 class="text-xl font-semibold text-indigo-600 mb-4">Menú</h3>
+                <ul>
+                    <li>
+                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
+                            Upcoming
+                        </button>
+                    </li>
+                    <li>
+                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
+                            Today
+                        </button>
+                    </li>
+                    <li>
+                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
+                            Calendar
+                        </button>
+                    </li>
+                    <li>
+                        <button class="button-primary w-full p-2 mb-2 rounded-lg transition-all">
+                            Sticky Wall
+                        </button>
+                    </li>
+                </ul>
 
-      <div class="bloque" role="region" aria-label="Tareas para la semana">
-        <h2><i class="fa-solid fa-calendar-week"></i> Esta semana</h2>
-        <ul id="lista-semana" class="lista"></ul>
-      </div>
+                <!-- Listas -->
+                <h3 class="text-xl font-semibold text-indigo-600 mt-6 mb-4">Listas</h3>
+                <ul id="listContainer" class="space-y-4">
+                    <!-- Listas dinámicas -->
+                </ul>
 
-      <!-- Panel tareas completadas -->
-      <div class="bloque" role="region" aria-label="Tareas completadas" id="panel-completadas" style="display: none;">
-        <h2><i class="fa-solid fa-check-double"></i> Tareas Completadas</h2>
-        <ul id="lista-completadas" class="lista"></ul>
-      </div>
+                <button onclick="addList()" class="button-secondary w-full p-2 mt-4 rounded-lg transition-all">
+                    Añadir Lista
+                </button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="w-3/4 bg-white shadow-lg rounded-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-semibold text-indigo-600">Tareas</h3>
+                    <button class="button-primary p-2 rounded-lg">Agregar tarea</button>
+                </div>
+
+                <!-- Tareas -->
+                <div id="taskList" class="space-y-4">
+                    <!-- Tareas dinámicas -->
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- === PANEL DE CALENDARIO === -->
-    <div id="calendario-panel" class="calendario" role="region" aria-label="Calendario de tareas" style="display: none;">
-      <div class="calendario-header">
-        <h2><i class="fa-solid fa-calendar-days"></i> Calendario de Tareas</h2>
-        <button id="btn-volver" class="boton-volver" aria-label="Volver a vista principal"><i class="fa-solid fa-arrow-left"></i> Volver</button>
-      </div>
-      <div id="calendario-grid" class="calendario-grid" aria-label="Días del mes"></div>
-      <div id="detalle-tareas-dia" class="detalle-tareas-dia" aria-live="polite"></div>
+    <!-- Modal para Agregar Lista -->
+    <div id="addListModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span onclick="closeModal()" class="close-modal">&times;</span>
+            <h3 class="text-xl font-semibold text-indigo-600 mb-4">Nueva Lista</h3>
+            <input type="text" id="newListName" placeholder="Nombre de la lista" class="w-full p-2 mb-4 border rounded-lg">
+            <input type="color" id="listColor" class="w-full p-2 mb-4 border rounded-lg" />
+            <button onclick="saveList()" class="button-secondary w-full p-2 rounded-lg transition-all">
+                Guardar Lista
+            </button>
+        </div>
     </div>
-  </div>
 
-  <!-- Botón flotante -->
-  <button class="boton-flotante" onclick="focusInput()" aria-label="Agregar nueva tarea rápidamente">
-    <i class="fas fa-plus"></i>
-  </button>
-
-  <!-- JS -->
-  <script src="js/index.js"></script>
+    <!-- Enlace al archivo JS -->
+    <script src="js/script.js"></script>
 </body>
+
 </html>
+
