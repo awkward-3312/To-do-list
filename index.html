@@ -15,7 +15,7 @@
 <body>
   <div class="layout">
     <!-- === SIDEBAR === -->
-    <aside class="sidebar">
+    <aside class="sidebar" aria-label="Menú principal">
       <h2>Mi Día</h2>
       <nav>
         <ul>
@@ -28,7 +28,7 @@
     </aside>
 
     <!-- === CONTENIDO PRINCIPAL === -->
-    <div class="contenedor" id="panel-principal">
+    <div class="contenedor" id="panel-principal" role="main">
       <!-- Header -->
       <header>
         <h1><i class="fa-solid fa-clipboard-check"></i> To-Do List</h1>
@@ -36,59 +36,66 @@
       </header>
 
       <!-- Filtros -->
-      <div class="filtros">
+      <div class="filtros" role="region" aria-label="Filtro de categoría">
         <input type="text" id="filtro-categoria" placeholder="Filtrar por categoría..." aria-label="Filtrar categoría" />
         <button id="boton-filtrar" aria-label="Aplicar filtro"><i class="fa-solid fa-filter"></i></button>
       </div>
 
       <!-- Formulario nueva tarea -->
-      <div class="agregar">
+      <div class="agregar" role="form" aria-label="Agregar nueva tarea">
         <input type="text" id="nueva-tarea" placeholder="Escribe una nueva tarea..." aria-label="Nueva tarea" />
-        <input type="text" id="categoria" placeholder="Categoría personalizada" aria-label="Categoría" />
-        <select id="prioridad" aria-label="Prioridad">
+        <input type="text" id="categoria" placeholder="Categoría personalizada" aria-label="Categoría personalizada" />
+        <select id="prioridad" aria-label="Seleccionar prioridad">
           <option value="alta">Alta</option>
           <option value="media">Media</option>
           <option value="baja">Baja</option>
         </select>
-        <select id="seccion" aria-label="Sección">
+        <select id="seccion" aria-label="Seleccionar sección">
           <option value="hoy">Hoy</option>
           <option value="manana">Mañana</option>
           <option value="semana">Semana</option>
         </select>
+        <input type="date" id="fecha-personalizada" aria-label="Seleccionar fecha" />
         <button onclick="agregarTarea()"><i class="fa-solid fa-plus"></i> Agregar</button>
       </div>
 
       <!-- Secciones de tareas -->
-      <div class="bloque">
+      <div class="bloque" role="region" aria-label="Tareas para hoy">
         <h2><i class="fa-solid fa-calendar-day"></i> Hoy</h2>
         <ul id="lista-hoy" class="lista"></ul>
-        <div id="progreso-dia" class="indicadores"></div>
+        <div id="progreso-dia" class="indicadores" aria-live="polite"></div>
       </div>
 
-      <div class="bloque">
+      <div class="bloque" role="region" aria-label="Tareas para mañana">
         <h2><i class="fa-solid fa-calendar-plus"></i> Mañana</h2>
         <ul id="lista-manana" class="lista"></ul>
       </div>
 
-      <div class="bloque">
+      <div class="bloque" role="region" aria-label="Tareas para la semana">
         <h2><i class="fa-solid fa-calendar-week"></i> Esta semana</h2>
         <ul id="lista-semana" class="lista"></ul>
       </div>
+
+      <!-- Panel tareas completadas -->
+      <div class="bloque" role="region" aria-label="Tareas completadas" id="panel-completadas" style="display: none;">
+        <h2><i class="fa-solid fa-check-double"></i> Tareas Completadas</h2>
+        <ul id="lista-completadas" class="lista"></ul>
+      </div>
     </div>
 
-    <!-- === PANEL DE CALENDARIO (oculto por defecto) === -->
-    <div id="calendario-panel" class="calendario" style="display: none;">
+    <!-- === PANEL DE CALENDARIO === -->
+    <div id="calendario-panel" class="calendario" role="region" aria-label="Calendario de tareas" style="display: none;">
       <div class="calendario-header">
         <h2><i class="fa-solid fa-calendar-days"></i> Calendario de Tareas</h2>
-        <button id="btn-volver" class="boton-volver"><i class="fa-solid fa-arrow-left"></i> Volver</button>
+        <button id="btn-volver" class="boton-volver" aria-label="Volver a vista principal"><i class="fa-solid fa-arrow-left"></i> Volver</button>
       </div>
-      <div id="calendario-grid" class="calendario-grid"></div>
-      <div id="detalle-tareas-dia" class="detalle-tareas-dia"></div>
+      <div id="calendario-grid" class="calendario-grid" aria-label="Días del mes"></div>
+      <div id="detalle-tareas-dia" class="detalle-tareas-dia" aria-live="polite"></div>
     </div>
   </div>
 
   <!-- Botón flotante -->
-  <button class="boton-flotante" onclick="focusInput()">
+  <button class="boton-flotante" onclick="focusInput()" aria-label="Agregar nueva tarea rápidamente">
     <i class="fas fa-plus"></i>
   </button>
 
