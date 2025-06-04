@@ -1,10 +1,26 @@
+// index.js
+// Código actualizado con: navegación, tareas, listas, sticky notes, modo oscuro y notificaciones
+
 // === Estado global ===
 let currentSection = null;
-let customLists = []; // Cada lista: { id, name, color }
-let tasksByList = {};  // { listId: [{ id, title, date }] }
-let stickyNotes = []; // Sticky notes individuales
+let customLists = [];
+let tasksByList = {};
+let stickyNotes = [];
 
-// === Navegación entre secciones ===
+// === Cargar datos del almacenamiento local ===
+function loadFromLocalStorage() {
+  customLists = JSON.parse(localStorage.getItem('customLists')) || [];
+  tasksByList = JSON.parse(localStorage.getItem('tasksByList')) || {};
+  stickyNotes = JSON.parse(localStorage.getItem('stickyNotes')) || [];
+}
+
+function saveToLocalStorage() {
+  localStorage.setItem('customLists', JSON.stringify(customLists));
+  localStorage.setItem('tasksByList', JSON.stringify(tasksByList));
+  localStorage.setItem('stickyNotes', JSON.stringify(stickyNotes));
+}
+
+// === Navegación ===
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const section = btn.dataset.section;
@@ -20,51 +36,24 @@ function setActiveSection(section) {
   renderMainPanel(section);
 }
 
+// === Renderizado de secciones ===
 function renderMainPanel(section) {
   const panel = document.getElementById('mainPanel');
-  panel.innerHTML = '';
+  document.querySelectorAll('#mainPanel > section').forEach(s => s.classList.add('hidden'));
+  document.getElementById('defaultMessage').classList.add('hidden');
 
-  if (section === 'upcoming') {
-    panel.innerHTML = `<h2 class="text-2xl font-bold text-[#FFAFCC] mb-4">Upcoming Tasks</h2><p>✨ Aquí verás tareas próximas.</p>`;
-  } else if (section === 'today') {
-    panel.innerHTML = `<h2 class="text-2xl font-bold text-[#FFC8DD] mb-4">Today's Tasks</h2><p>🗓️ Aquí irán las tareas de hoy.</p>`;
-  } else if (section === 'calendar') {
-    panel.innerHTML = `
-      <h2 class="text-2xl font-bold text-[#A2D2FF] mb-4 flex items-center gap-2">
-        <i class="fas fa-calendar-alt text-[#A2D2FF]"></i> Calendar View
-      </h2>
-      <div id="calendar" class="bg-white rounded-lg shadow p-4"></div>
-    `;
-
-    const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      height: 'auto',
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      events: getAllTasksAsEvents()
-    });
-
-    calendar.render();
-  } else if (section === 'sticky') {
-    panel.innerHTML = `
-      <h2 class="text-2xl font-bold text-[#CDB4DB] mb-4 flex items-center gap-2">
-        <i class="fas fa-sticky-note text-[#CDB4DB]"></i> Sticky Wall
-      </h2>
-      <div id="stickyWall" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-      <button onclick="addStickyNote()" class="mt-4 px-4 py-2 bg-[#FFAFCC] text-white rounded-lg">+ Nueva Nota</button>
-    `;
-
-    renderStickyNotes();
+  if (document.getElementById(section)) {
+    document.getElementById(section).classList.remove('hidden');
   } else {
-    panel.innerHTML = `<p class="text-center text-gray-500 italic">Selecciona una sección para comenzar...</p>`;
+    document.getElementById('defaultMessage').classList.remove('hidden');
   }
+
+  if (section === 'calendar') renderCalendar();
+  if (section === 'sticky') renderStickyNotes();
 }
 
-function addList() {
+// === Modal de Lista ===
+function openModal() {
   document.getElementById('addListModal').classList.remove('hidden');
 }
 
@@ -79,6 +68,7 @@ function saveList() {
   const color = colorInput.value;
 
   if (!name) return alert('Escribe un nombre para la lista.');
+  if (customLists.find(l => l.name === name)) return alert('Ya existe una lista con ese nombre.');
 
   const id = Date.now();
   customLists.push({ id, name, color });
@@ -91,6 +81,7 @@ function saveList() {
   saveToLocalStorage();
 }
 
+// === Renderizar listas personalizadas ===
 function renderCustomLists() {
   const container = document.getElementById('listContainer');
   container.innerHTML = '';
@@ -104,9 +95,9 @@ function renderCustomLists() {
     btn.style.backgroundColor = list.color;
     btn.textContent = list.name;
     btn.onclick = () => {
-      const task = prompt(`Añadir tarea para "${list.name}" (con fecha YYYY-MM-DD):`);
+      const task = prompt(`Añadir tarea para "${list.name}"`);
       if (task) {
-        const date = prompt('¿Fecha para esta tarea?');
+        const date = prompt('¿Fecha para esta tarea? (YYYY-MM-DD)');
         if (date) {
           addTaskToList(list.id, task, date);
           saveToLocalStorage();
@@ -115,7 +106,7 @@ function renderCustomLists() {
     };
 
     const del = document.createElement('button');
-    del.innerHTML = '🗑️';
+    del.innerHTML = '<i class="fas fa-trash"></i>';
     del.className = 'ml-2 text-red-500 hover:text-red-700';
     del.onclick = () => deleteList(list.id);
 
@@ -150,6 +141,23 @@ function getAllTasksAsEvents() {
   return events;
 }
 
+// === FullCalendar ===
+function renderCalendar() {
+  const calendarEl = document.getElementById('calendar');
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    events: getAllTasksAsEvents()
+  });
+  calendar.render();
+}
+
+// === Sticky Notes ===
 function addStickyNote() {
   const text = prompt('Escribe tu nota:');
   if (text) {
@@ -185,20 +193,15 @@ function deleteSticky(id) {
   saveToLocalStorage();
 }
 
-function saveToLocalStorage() {
-  localStorage.setItem('customLists', JSON.stringify(customLists));
-  localStorage.setItem('tasksByList', JSON.stringify(tasksByList));
-  localStorage.setItem('stickyNotes', JSON.stringify(stickyNotes));
-}
+// === Modo oscuro ===
+const toggle = document.getElementById('darkModeToggle');
+toggle.addEventListener('change', () => {
+  document.body.classList.toggle('dark');
+});
 
-function loadFromLocalStorage() {
-  customLists = JSON.parse(localStorage.getItem('customLists')) || [];
-  tasksByList = JSON.parse(localStorage.getItem('tasksByList')) || {};
-  stickyNotes = JSON.parse(localStorage.getItem('stickyNotes')) || [];
-}
-
+// === Inicialización ===
 document.addEventListener('DOMContentLoaded', () => {
   loadFromLocalStorage();
-  renderMainPanel(null);
   renderCustomLists();
+  setActiveSection(null);
 });
