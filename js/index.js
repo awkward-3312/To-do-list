@@ -1,23 +1,29 @@
 // index.js
-// Código actualizado con: navegación, tareas, listas, sticky notes, modo oscuro y notificaciones
+// Código actualizado con: navegación, tareas, listas, sticky notes y modo oscuro
 
 // === Estado global ===
 let currentSection = null;
 let customLists = [];
 let tasksByList = {};
 let stickyNotes = [];
+let todayTasks = [];
+let completedTasks = [];
 
 // === Cargar datos del almacenamiento local ===
 function loadFromLocalStorage() {
   customLists = JSON.parse(localStorage.getItem('customLists')) || [];
   tasksByList = JSON.parse(localStorage.getItem('tasksByList')) || {};
   stickyNotes = JSON.parse(localStorage.getItem('stickyNotes')) || [];
+  todayTasks = JSON.parse(localStorage.getItem('todayTasks')) || [];
+  completedTasks = JSON.parse(localStorage.getItem('completedTasks')) || [];
 }
 
 function saveToLocalStorage() {
   localStorage.setItem('customLists', JSON.stringify(customLists));
   localStorage.setItem('tasksByList', JSON.stringify(tasksByList));
   localStorage.setItem('stickyNotes', JSON.stringify(stickyNotes));
+  localStorage.setItem('todayTasks', JSON.stringify(todayTasks));
+  localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
 }
 
 // === Navegación ===
@@ -130,6 +136,95 @@ function addTaskToList(listId, title, date) {
   tasksByList[listId].push({ id: Date.now(), title, date });
 }
 
+// === Tareas de Hoy ===
+function addTodayTask() {
+  const title = prompt('Título de la tarea');
+  if (!title) return;
+  const time = prompt('Hora (HH:MM) opcional') || '';
+  const priority = prompt('Prioridad (baja, media, alta)', 'media');
+  todayTasks.push({ id: Date.now(), title, time, priority });
+  renderToday();
+  saveToLocalStorage();
+}
+
+function renderToday() {
+  const list = document.getElementById('todayList');
+  if (!list) return;
+  list.innerHTML = '';
+  todayTasks.sort((a, b) => a.time.localeCompare(b.time));
+  todayTasks.forEach(task => {
+    const li = document.createElement('li');
+    li.className = 'flex items-center justify-between bg-white p-2 rounded shadow';
+    li.innerHTML = `
+      <div class="flex items-center gap-2">
+        <input type="checkbox">
+        <span>${task.title}</span>
+        ${task.time ? `<span class="text-xs text-gray-500">${task.time}</span>` : ''}
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="edit-btn text-blue-500"><i class="fas fa-edit"></i></button>
+        <button class="delete-btn text-red-500"><i class="fas fa-trash"></i></button>
+      </div>`;
+    li.querySelector('input').addEventListener('change', () => toggleComplete(task.id));
+    li.querySelector('.delete-btn').addEventListener('click', () => deleteTodayTask(task.id));
+    li.querySelector('.edit-btn').addEventListener('click', () => editTodayTask(task.id));
+    list.appendChild(li);
+  });
+}
+
+function deleteTodayTask(id) {
+  todayTasks = todayTasks.filter(t => t.id !== id);
+  renderToday();
+  saveToLocalStorage();
+}
+
+function editTodayTask(id) {
+  const task = todayTasks.find(t => t.id === id);
+  if (!task) return;
+  const newTitle = prompt('Editar tarea', task.title);
+  if (newTitle) {
+    task.title = newTitle;
+    renderToday();
+    saveToLocalStorage();
+  }
+}
+
+function toggleComplete(id) {
+  const task = todayTasks.find(t => t.id === id);
+  if (!task) return;
+  todayTasks = todayTasks.filter(t => t.id !== id);
+  completedTasks.push({ ...task });
+  renderToday();
+  renderCompleted();
+  saveToLocalStorage();
+}
+
+function renderCompleted() {
+  const list = document.getElementById('completedList');
+  if (!list) return;
+  list.innerHTML = '';
+  completedTasks.forEach(task => {
+    const li = document.createElement('li');
+    li.className = 'flex items-center justify-between bg-gray-100 p-2 rounded';
+    li.innerHTML = `
+      <span>${task.title}</span>
+      <button class="restore-btn text-green-600"><i class="fas fa-undo"></i></button>
+    `;
+    li.querySelector('.restore-btn').addEventListener('click', () => restoreTask(task.id));
+    list.appendChild(li);
+  });
+}
+
+function restoreTask(id) {
+  const task = completedTasks.find(t => t.id === id);
+  if (!task) return;
+  completedTasks = completedTasks.filter(t => t.id !== id);
+  todayTasks.push(task);
+  renderCompleted();
+  renderToday();
+  saveToLocalStorage();
+}
+
 function getAllTasksAsEvents() {
   const events = [];
   for (const list of customLists) {
@@ -203,5 +298,29 @@ toggle.addEventListener('change', () => {
 document.addEventListener('DOMContentLoaded', () => {
   loadFromLocalStorage();
   renderCustomLists();
+  renderToday();
+  renderCompleted();
   setActiveSection(null);
+  const addBtn = document.getElementById('addTodayTask');
+  if (addBtn) addBtn.addEventListener('click', addTodayTask);
 });
+
+// Export helpers for testing
+if (typeof module !== 'undefined') {
+  module.exports = {
+    loadFromLocalStorage,
+    saveToLocalStorage,
+    // Utilities to manipulate module state in tests
+    setData: (lists, tasks, notes, today, completed) => {
+      customLists = lists;
+      tasksByList = tasks;
+      stickyNotes = notes;
+      todayTasks = today;
+      completedTasks = completed;
+    },
+    getData: () => ({ customLists, tasksByList, stickyNotes, todayTasks, completedTasks }),
+    addTodayTask,
+    toggleComplete,
+    restoreTask
+  };
+}

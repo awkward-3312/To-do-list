@@ -41,6 +41,7 @@
             <li><button class="nav-btn" data-section="completed"><i class="fas fa-check mr-2"></i> Completed</button></li>
             <li><button class="nav-btn" data-section="dashboard"><i class="fas fa-chart-line mr-2"></i> Dashboard</button></li>
           </ul>
+          <div id="listContainer" class="space-y-2"></div>
           <button class="text-sm text-[#A2D2FF] hover:text-[#FFAFCC] transition-all" onclick="openModal()">
             <i class="fas fa-plus mr-2"></i> Create New List
           </button>
@@ -56,17 +57,35 @@
           </label>
         </div>
       </div>
-      <p class="text-xs text-center text-gray-400 mt-4">Desarrollado por Betzabe Escobar</p>
+      <p class="text-xs text-center text-gray-400 mt-4">Desarrollado por Betzabé Escobar</p>
     </aside>
 
     <!-- Panel principal -->
     <main class="flex-1 p-6 overflow-y-auto" id="mainPanel">
       <!-- Contenido dinámico -->
-      <section id="today" class="hidden"></section>
-      <section id="upcoming" class="hidden"></section>
+      <section id="today" class="hidden">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Tasks for Today</h2>
+          <button id="addTodayTask" class="button-secondary px-3 py-1 rounded-lg text-sm transition-all">
+            <i class="fas fa-plus mr-1"></i> Add Task
+          </button>
+        </div>
+        <ul id="todayList" class="space-y-2"></ul>
+      </section>
+      <section id="upcoming" class="hidden">
+        <p class="text-gray-600">Upcoming tasks will appear here.</p>
+      </section>
       <section id="calendar" class="hidden"></section>
-      <section id="sticky" class="hidden"></section>
-      <section id="completed" class="hidden"></section>
+      <section id="sticky" class="hidden">
+        <button class="button-secondary mb-4" onclick="addStickyNote()">
+          <i class="fas fa-plus mr-1"></i> New Note
+        </button>
+        <div id="stickyWall" class="relative space-y-4"></div>
+      </section>
+      <section id="completed" class="hidden">
+        <h2 class="text-xl font-semibold mb-4">Completed Tasks</h2>
+        <ul id="completedList" class="space-y-2"></ul>
+      </section>
       <section id="dashboard" class="hidden"></section>
       <div id="defaultMessage" class="text-center text-gray-500 italic">Selecciona una sección para comenzar...</div>
     </main>
