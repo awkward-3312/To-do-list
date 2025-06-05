@@ -9,6 +9,21 @@ let stickyNotes = [];
 let todayTasks = [];
 let completedTasks = [];
 
+// === Sidebar mobile toggle ===
+function toggleSidebar(open) {
+  if (typeof document === 'undefined') return;
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (!sidebar || !overlay) return;
+  if (open) {
+    sidebar.classList.add('open');
+    overlay.classList.remove('hidden');
+  } else {
+    sidebar.classList.remove('open');
+    overlay.classList.add('hidden');
+  }
+}
+
 // === Cargar datos del almacenamiento local ===
 function loadFromLocalStorage() {
   customLists = JSON.parse(localStorage.getItem('customLists')) || [];
@@ -27,12 +42,14 @@ function saveToLocalStorage() {
 }
 
 // === Navegación ===
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const section = btn.dataset.section;
-    setActiveSection(section);
+if (typeof document !== 'undefined') {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const section = btn.dataset.section;
+      setActiveSection(section);
+    });
   });
-});
+}
 
 function setActiveSection(section) {
   currentSection = section;
@@ -56,6 +73,8 @@ function renderMainPanel(section) {
 
   if (section === 'calendar') renderCalendar();
   if (section === 'sticky') renderStickyNotes();
+  if (section === 'dashboard') renderDashboard();
+  if (section === 'upcoming') renderUpcoming();
 }
 
 // === Modal de Lista ===
@@ -127,6 +146,7 @@ function deleteList(id) {
     customLists = customLists.filter(l => l.id !== id);
     delete tasksByList[id];
     renderCustomLists();
+    renderUpcoming();
     saveToLocalStorage();
   }
 }
@@ -134,6 +154,7 @@ function deleteList(id) {
 function addTaskToList(listId, title, date) {
   if (!tasksByList[listId]) tasksByList[listId] = [];
   tasksByList[listId].push({ id: Date.now(), title, date });
+  renderUpcoming();
 }
 
 // === Tareas de Hoy ===
@@ -145,6 +166,7 @@ function addTodayTask() {
   todayTasks.push({ id: Date.now(), title, time, priority });
   renderToday();
   saveToLocalStorage();
+  sendNotification('Nueva tarea: ' + title);
 }
 
 function renderToday() {
@@ -155,8 +177,10 @@ function renderToday() {
   todayTasks.forEach(task => {
     const li = document.createElement('li');
     li.className = 'flex items-center justify-between bg-white p-2 rounded shadow';
+    const colors = { baja: 'green', media: 'yellow', alta: 'red' };
     li.innerHTML = `
       <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full" style="background:${colors[task.priority] || 'gray'}"></span>
         <input type="checkbox">
         <span>${task.title}</span>
         ${task.time ? `<span class="text-xs text-gray-500">${task.time}</span>` : ''}
@@ -225,6 +249,59 @@ function restoreTask(id) {
   saveToLocalStorage();
 }
 
+function gatherUpcomingTasks() {
+  const tasks = [];
+  const today = new Date();
+  for (const list of customLists) {
+    const taskList = tasksByList[list.id] || [];
+    for (const task of taskList) {
+      const date = new Date(task.date);
+      if (date >= today) {
+        tasks.push({ ...task, listName: list.name, listColor: list.color });
+      }
+    }
+  }
+  return tasks;
+}
+
+function renderUpcoming() {
+  const container = document.getElementById('upcoming');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const tasks = gatherUpcomingTasks();
+  const tomorrow = [], week = [], later = [];
+  const today = new Date();
+  tasks.forEach(t => {
+    const diff = Math.ceil((new Date(t.date) - today) / (1000 * 60 * 60 * 24));
+    if (diff === 1) tomorrow.push(t);
+    else if (diff <= 7) week.push(t);
+    else later.push(t);
+  });
+
+  const groups = [
+    { name: 'Tomorrow', items: tomorrow },
+    { name: 'This Week', items: week },
+    { name: 'Later', items: later }
+  ];
+
+  groups.forEach(g => {
+    if (!g.items.length) return;
+    const section = document.createElement('div');
+    section.className = 'mb-4';
+    section.innerHTML = `<h3 class="font-semibold mb-2">${g.name}</h3>`;
+    g.items.forEach(task => {
+      const item = document.createElement('div');
+      item.className = 'flex justify-between bg-white p-2 rounded mb-2 shadow';
+      item.innerHTML = `
+        <span>${task.title} <span class="text-xs" style="color:${task.listColor}">(${task.listName})</span></span>
+        <span class="text-sm text-gray-500">${task.date}</span>`;
+      section.appendChild(item);
+    });
+    container.appendChild(section);
+  });
+}
+
 function getAllTasksAsEvents() {
   const events = [];
   for (const list of customLists) {
@@ -252,11 +329,30 @@ function renderCalendar() {
   calendar.render();
 }
 
+function renderDashboard() {
+  const dash = document.getElementById('dashboard');
+  if (!dash) return;
+  dash.innerHTML = '';
+  let total = 0;
+  for (const id in tasksByList) {
+    total += tasksByList[id].length;
+  }
+  const completed = completedTasks.length;
+  const categories = customLists.map(l => `${l.name}: ${tasksByList[l.id]?.length || 0}`);
+  dash.innerHTML = `
+    <div class="mb-2">Total tasks: <strong>${total}</strong></div>
+    <div class="mb-2">Completed: <strong>${completed}</strong></div>
+    <div class="space-y-1">
+      ${categories.map(c => `<div>${c}</div>`).join('')}
+    </div>
+  `;
+}
+
 // === Sticky Notes ===
 function addStickyNote() {
   const text = prompt('Escribe tu nota:');
   if (text) {
-    stickyNotes.push({ id: Date.now(), text });
+    stickyNotes.push({ id: Date.now(), text, x: 0, y: 0 });
     renderStickyNotes();
     saveToLocalStorage();
   }
@@ -269,7 +365,9 @@ function renderStickyNotes() {
 
   stickyNotes.forEach(note => {
     const card = document.createElement('div');
-    card.className = 'bg-yellow-100 p-4 rounded-lg shadow-md relative';
+    card.className = 'sticky-note';
+    card.style.left = (note.x || 0) + 'px';
+    card.style.top = (note.y || 0) + 'px';
     card.innerHTML = `
       <textarea class="w-full bg-transparent resize-none text-sm text-gray-800 focus:outline-none">${note.text}</textarea>
       <button class="absolute top-2 right-2 text-xs text-red-500 hover:text-red-700" onclick="deleteSticky(${note.id})">×</button>
@@ -278,7 +376,32 @@ function renderStickyNotes() {
       note.text = e.target.value;
       saveToLocalStorage();
     });
+    enableDrag(card, note);
     wall.appendChild(card);
+  });
+}
+
+function enableDrag(el, note) {
+  let offsetX = 0,
+      offsetY = 0,
+      dragging = false;
+  el.addEventListener('mousedown', e => {
+    dragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    note.x = e.clientX - offsetX;
+    note.y = e.clientY - offsetY;
+    el.style.left = note.x + 'px';
+    el.style.top = note.y + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    if (dragging) {
+      dragging = false;
+      saveToLocalStorage();
+    }
   });
 }
 
@@ -289,21 +412,46 @@ function deleteSticky(id) {
 }
 
 // === Modo oscuro ===
-const toggle = document.getElementById('darkModeToggle');
-toggle.addEventListener('change', () => {
-  document.body.classList.toggle('dark');
-});
+let toggle;
+if (typeof document !== 'undefined') {
+  toggle = document.getElementById('darkModeToggle');
+  if (toggle) {
+    toggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark');
+    });
+  }
+}
+
+function sendNotification(msg) {
+  if (typeof Notification === 'undefined') return;
+  if (Notification.permission === 'granted') {
+    new Notification(msg);
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') new Notification(msg);
+    });
+  }
+}
 
 // === Inicialización ===
-document.addEventListener('DOMContentLoaded', () => {
-  loadFromLocalStorage();
-  renderCustomLists();
-  renderToday();
-  renderCompleted();
-  setActiveSection(null);
-  const addBtn = document.getElementById('addTodayTask');
-  if (addBtn) addBtn.addEventListener('click', addTodayTask);
-});
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFromLocalStorage();
+    renderCustomLists();
+    renderToday();
+    renderCompleted();
+    renderUpcoming();
+    setActiveSection(null);
+    const addBtn = document.getElementById('addTodayTask');
+    if (addBtn) addBtn.addEventListener('click', addTodayTask);
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const closeBtn = document.getElementById('closeSidebar');
+    if (toggleBtn) toggleBtn.addEventListener('click', () => toggleSidebar(true));
+    if (overlay) overlay.addEventListener('click', () => toggleSidebar(false));
+    if (closeBtn) closeBtn.addEventListener('click', () => toggleSidebar(false));
+  });
+}
 
 // Export helpers for testing
 if (typeof module !== 'undefined') {

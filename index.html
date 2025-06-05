@@ -19,9 +19,12 @@
   <link rel="stylesheet" href="css/index.css" />
 </head>
 <body class="bg-[#BDE0FE] text-gray-800 font-sans">
+  <button id="toggleSidebar" class="md:hidden p-4 text-xl"><i class="fas fa-bars"></i></button>
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 hidden md:hidden z-30"></div>
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <aside id="sidebar" class="w-72 bg-white shadow-lg p-6 flex flex-col justify-between">
+      <button id="closeSidebar" class="md:hidden self-end text-xl mb-4"><i class="fas fa-times"></i></button>
       <div>
         <div class="mb-8">
           <h1 class="text-2xl font-bold text-[#CDB4DB] tracking-wide flex items-center gap-2">
