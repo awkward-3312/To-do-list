@@ -77,13 +77,59 @@ function renderMainPanel(section) {
   if (section === 'upcoming') renderUpcoming();
 }
 
-// === Modal de Lista ===
-function openModal() {
-  document.getElementById('addListModal').classList.remove('hidden');
+// === Modal Dinámico ===
+let modalType = null;
+let targetListId = null;
+
+function openDataModal(type) {
+  modalType = type;
+  const modal = document.getElementById('dataModal');
+  const inner = document.getElementById('modalInner');
+  if (!modal || !inner) return;
+
+  modal.classList.remove('hidden');
+  inner.innerHTML = '';
+
+  if (type === 'list') {
+    inner.innerHTML = `
+      <h3 class="text-xl font-semibold text-[#CDB4DB] mb-4"><i class="fas fa-folder-plus mr-2"></i>Nueva Lista</h3>
+      <input type="text" id="newListName" placeholder="Nombre de la lista" class="w-full p-2 mb-4 border rounded-lg">
+      <input type="color" id="listColor" class="w-full p-2 mb-4 border rounded-lg" />
+      <button id="saveModalBtn" class="button-secondary w-full p-2 rounded-lg transition-all">Guardar Lista</button>
+    `;
+  } else if (type === 'task') {
+    inner.innerHTML = `
+      <h3 class="text-xl font-semibold text-[#CDB4DB] mb-4"><i class="fas fa-tasks mr-2"></i>Nueva Tarea</h3>
+      <input type="text" id="taskTitle" placeholder="Título" class="w-full p-2 mb-4 border rounded-lg">
+      ${targetListId !== null ? '<input type="date" id="taskDate" class="w-full p-2 mb-4 border rounded-lg">' : '<input type="time" id="taskTime" class="w-full p-2 mb-4 border rounded-lg"><select id="taskPriority" class="w-full p-2 mb-4 border rounded-lg"><option value="baja">Baja</option><option value="media" selected>Media</option><option value="alta">Alta</option></select>'}
+      <button id="saveModalBtn" class="button-secondary w-full p-2 rounded-lg transition-all">Guardar Tarea</button>
+    `;
+  } else if (type === 'sticky') {
+    inner.innerHTML = `
+      <h3 class="text-xl font-semibold text-[#CDB4DB] mb-4"><i class="fas fa-sticky-note mr-2"></i>Nueva Nota</h3>
+      <textarea id="stickyText" placeholder="Escribe tu nota..." class="w-full p-2 mb-4 border rounded-lg"></textarea>
+      <button id="saveModalBtn" class="button-secondary w-full p-2 rounded-lg transition-all">Guardar Nota</button>
+    `;
+  }
+
+  const saveBtn = document.getElementById('saveModalBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      if (modalType === 'list') return saveList();
+      if (modalType === 'task') return saveTask();
+      if (modalType === 'sticky') return saveSticky();
+    });
+  }
 }
 
-function closeModal() {
-  document.getElementById('addListModal').classList.add('hidden');
+function closeDataModal() {
+  const modal = document.getElementById('dataModal');
+  const inner = document.getElementById('modalInner');
+  if (!modal || !inner) return;
+  modal.classList.add('hidden');
+  inner.innerHTML = '';
+  modalType = null;
+  targetListId = null;
 }
 
 function saveList() {
@@ -101,9 +147,41 @@ function saveList() {
 
   nameInput.value = '';
   colorInput.value = '#BDE0FE';
-  closeModal();
+  closeDataModal();
   renderCustomLists();
   saveToLocalStorage();
+}
+
+function saveTask() {
+  const titleInput = document.getElementById('taskTitle');
+  const title = titleInput ? titleInput.value.trim() : '';
+  if (!title) return alert('Escribe un título para la tarea.');
+
+  if (targetListId !== null) {
+    const date = document.getElementById('taskDate').value;
+    if (!date) return alert('Elige una fecha para la tarea.');
+    addTaskToList(targetListId, title, date);
+    saveToLocalStorage();
+  } else {
+    const time = document.getElementById('taskTime').value;
+    const priority = document.getElementById('taskPriority').value;
+    todayTasks.push({ id: Date.now(), title, time, priority });
+    renderToday();
+    saveToLocalStorage();
+    sendNotification('Nueva tarea: ' + title);
+  }
+  closeDataModal();
+}
+
+function saveSticky() {
+  const textarea = document.getElementById('stickyText');
+  const text = textarea ? textarea.value.trim() : '';
+  if (text) {
+    stickyNotes.push({ id: Date.now(), text, x: 0, y: 0 });
+    renderStickyNotes();
+    saveToLocalStorage();
+  }
+  closeDataModal();
 }
 
 // === Renderizar listas personalizadas ===
@@ -120,14 +198,8 @@ function renderCustomLists() {
     btn.style.backgroundColor = list.color;
     btn.textContent = list.name;
     btn.onclick = () => {
-      const task = prompt(`Añadir tarea para "${list.name}"`);
-      if (task) {
-        const date = prompt('¿Fecha para esta tarea? (YYYY-MM-DD)');
-        if (date) {
-          addTaskToList(list.id, task, date);
-          saveToLocalStorage();
-        }
-      }
+      targetListId = list.id;
+      openDataModal('task');
     };
 
     const del = document.createElement('button');
@@ -159,14 +231,8 @@ function addTaskToList(listId, title, date) {
 
 // === Tareas de Hoy ===
 function addTodayTask() {
-  const title = prompt('Título de la tarea');
-  if (!title) return;
-  const time = prompt('Hora (HH:MM) opcional') || '';
-  const priority = prompt('Prioridad (baja, media, alta)', 'media');
-  todayTasks.push({ id: Date.now(), title, time, priority });
-  renderToday();
-  saveToLocalStorage();
-  sendNotification('Nueva tarea: ' + title);
+  targetListId = null;
+  openDataModal('task');
 }
 
 function renderToday() {
@@ -350,12 +416,7 @@ function renderDashboard() {
 
 // === Sticky Notes ===
 function addStickyNote() {
-  const text = prompt('Escribe tu nota:');
-  if (text) {
-    stickyNotes.push({ id: Date.now(), text, x: 0, y: 0 });
-    renderStickyNotes();
-    saveToLocalStorage();
-  }
+  openDataModal('sticky');
 }
 
 function renderStickyNotes() {
