@@ -45,7 +45,7 @@
             <li><button class="nav-btn" data-section="dashboard"><i class="fas fa-chart-line mr-2"></i> Dashboard</button></li>
           </ul>
           <div id="listContainer" class="space-y-2"></div>
-          <button class="text-sm text-[#A2D2FF] hover:text-[#FFAFCC] transition-all" onclick="openModal()">
+          <button class="text-sm text-[#A2D2FF] hover:text-[#FFAFCC] transition-all" onclick="openDataModal('list')">
             <i class="fas fa-plus mr-2"></i> Create New List
           </button>
         </nav>
@@ -94,14 +94,11 @@
     </main>
   </div>
 
-  <!-- Modal Nueva Lista -->
-  <div id="addListModal" class="modal-overlay hidden">
+  <!-- Data Modal -->
+  <div id="dataModal" class="modal-overlay hidden">
     <div class="modal-content">
-      <span onclick="closeModal()" class="close-modal">&times;</span>
-      <h3 class="text-xl font-semibold text-[#CDB4DB] mb-4">Nueva Lista</h3>
-      <input type="text" id="newListName" placeholder="Nombre de la lista" class="w-full p-2 mb-4 border rounded-lg">
-      <input type="color" id="listColor" class="w-full p-2 mb-4 border rounded-lg" />
-      <button onclick="saveList()" class="button-secondary w-full p-2 rounded-lg transition-all">Guardar Lista</button>
+      <span onclick="closeDataModal()" class="close-modal">&times;</span>
+      <div id="modalInner"></div>
     </div>
   </div>
 
