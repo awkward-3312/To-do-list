@@ -19,12 +19,12 @@
   <link rel="stylesheet" href="css/index.css" />
 </head>
 <body class="bg-[#BDE0FE] text-gray-800 font-sans">
-  <button id="toggleSidebar" class="md:hidden p-4 text-xl"><i class="fas fa-bars"></i></button>
+  <button id="toggleSidebar" aria-label="Abrir menú" class="md:hidden p-4 text-xl"><i class="fas fa-bars"></i></button>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 hidden md:hidden z-30"></div>
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <aside id="sidebar" class="w-72 bg-white shadow-lg p-6 flex flex-col justify-between">
-      <button id="closeSidebar" class="md:hidden self-end text-xl mb-4"><i class="fas fa-times"></i></button>
+      <button id="closeSidebar" aria-label="Cerrar menú" class="md:hidden self-end text-xl mb-4"><i class="fas fa-times"></i></button>
       <div>
         <div class="mb-8">
           <h1 class="text-2xl font-bold text-[#CDB4DB] tracking-wide flex items-center gap-2">
@@ -32,7 +32,8 @@
           </h1>
         </div>
         <div class="mb-6">
-          <input type="text" placeholder="Buscar..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#A2D2FF]" />
+          <label class="sr-only" for="searchInput">Buscar</label>
+          <input id="searchInput" aria-label="Buscar" type="text" placeholder="Buscar..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#A2D2FF]" />
         </div>
         <nav>
           <h2 class="text-xs font-semibold text-gray-500 uppercase mb-2">Tareas</h2>
@@ -45,13 +46,13 @@
             <li><button class="nav-btn" data-section="dashboard"><i class="fas fa-chart-line mr-2"></i> Dashboard</button></li>
           </ul>
           <div id="listContainer" class="space-y-2"></div>
-          <button class="text-sm text-[#A2D2FF] hover:text-[#FFAFCC] transition-all" onclick="openDataModal('list')">
+          <button aria-label="Crear nueva lista" class="text-sm text-[#A2D2FF] hover:text-[#FFAFCC] transition-all" onclick="openDataModal('list')">
             <i class="fas fa-plus mr-2"></i> Create New List
           </button>
         </nav>
         <hr class="my-6 border-gray-300">
         <div class="flex items-center justify-between">
-          <label for="darkModeToggle" class="flex items-center cursor-pointer">
+          <label for="darkModeToggle" class="flex items-center cursor-pointer" aria-label="Modo oscuro">
             <span class="mr-2 text-sm">🌙</span>
             <input type="checkbox" id="darkModeToggle" class="hidden">
             <div class="w-10 h-5 bg-gray-300 rounded-full p-1 flex items-center">
@@ -69,7 +70,7 @@
       <section id="today" class="hidden">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-semibold">Tasks for Today</h2>
-          <button id="addTodayTask" class="button-secondary px-3 py-1 rounded-lg text-sm transition-all">
+          <button id="addTodayTask" aria-label="Agregar tarea" class="button-secondary px-3 py-1 rounded-lg text-sm transition-all">
             <i class="fas fa-plus mr-1"></i> Add Task
           </button>
         </div>
@@ -80,7 +81,7 @@
       </section>
       <section id="calendar" class="hidden"></section>
       <section id="sticky" class="hidden">
-        <button class="button-secondary mb-4" onclick="addStickyNote()">
+        <button class="button-secondary mb-4" aria-label="Nueva nota" onclick="addStickyNote()">
           <i class="fas fa-plus mr-1"></i> New Note
         </button>
         <div id="stickyWall" class="relative space-y-4"></div>
@@ -103,6 +104,9 @@
   </div>
 
   <!-- JS -->
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/events.js"></script>
   <script src="js/index.js"></script>
 </body>
 </html>
