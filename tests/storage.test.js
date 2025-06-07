@@ -1,4 +1,4 @@
-const { loadFromLocalStorage, saveToLocalStorage, setData, getData } = require('../js/index.js');
+const { loadFromLocalStorage, saveToLocalStorage, setData, getData } = require('../js/storage.js');
 
 describe('localStorage helpers', () => {
   beforeEach(() => {
